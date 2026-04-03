@@ -1,0 +1,76 @@
+-- 1. Tạo Database (Sử dụng utf8mb4 để hỗ trợ gõ tiếng Việt có dấu trơn tru)
+CREATE DATABASE IF NOT EXISTS banve_worldcup DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE banve_worldcup;
+
+-- 2. Xóa bảng cũ nếu tồn tại (Giúp bạn có thể chạy đi chạy lại file này nhiều lần mà không bị lỗi)
+DROP TABLE IF EXISTS tbl_donhang;
+DROP TABLE IF EXISTS tbl_ve;
+DROP TABLE IF EXISTS tbl_trandau;
+DROP TABLE IF EXISTS tbl_nguoidung;
+
+-- 3. Bảng Người dùng (Số dư mặc định là 0, thẻ và ngân hàng cho phép rỗng)
+CREATE TABLE tbl_nguoidung (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    ten_dang_nhap VARCHAR(50) NOT NULL UNIQUE,
+    mat_khau VARCHAR(255) NOT NULL,
+    ho_ten VARCHAR(100),
+    email VARCHAR(100),
+    sdt VARCHAR(15),
+    ten_ngan_hang VARCHAR(100) DEFAULT NULL,
+    ma_the VARCHAR(20) DEFAULT NULL,
+    so_du DECIMAL(15, 2) DEFAULT 0.00, 
+    vai_tro ENUM('admin', 'khach_hang') DEFAULT 'khach_hang',
+    ngay_tao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 4. Bảng Trận đấu (Lưu lịch thi đấu)
+CREATE TABLE tbl_trandau (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    bang_dau CHAR(1) NOT NULL, 
+    doi_nha VARCHAR(100) NOT NULL,
+    doi_khach VARCHAR(100) NOT NULL,
+    thoi_gian DATETIME NOT NULL,
+    san_van_dong VARCHAR(150),
+    trang_thai ENUM('sap_dien_ra', 'dang_da', 'da_ket_thuc') DEFAULT 'sap_dien_ra'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 5. Bảng Vé (Quản lý số lượng và giá vé cho từng trận)
+CREATE TABLE tbl_ve (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_trandau INT NOT NULL,
+    hang_ve ENUM('Category 1', 'Category 2', 'Category 3', 'VIP') NOT NULL,
+    gia_tien DECIMAL(15, 2) NOT NULL,
+    so_luong_tong INT NOT NULL,
+    so_luong_con INT NOT NULL,
+    FOREIGN KEY (id_trandau) REFERENCES tbl_trandau(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 6. Bảng Đơn hàng (Lưu lịch sử mua vé và trừ tiền)
+CREATE TABLE tbl_donhang (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_nguoidung INT NOT NULL,
+    id_ve INT NOT NULL,
+    so_luong_mua INT NOT NULL,
+    tong_tien DECIMAL(15, 2) NOT NULL,
+    ngay_dat TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    trang_thai ENUM('thanh_cong', 'da_huy') DEFAULT 'thanh_cong',
+    FOREIGN KEY (id_nguoidung) REFERENCES tbl_nguoidung(id) ON DELETE CASCADE,
+    FOREIGN KEY (id_ve) REFERENCES tbl_ve(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 7. CHÈN DỮ LIỆU MẪU ĐỂ TEST CODE
+-- Tạo sẵn tài khoản Admin (Mật khẩu là: 123456)
+INSERT INTO tbl_nguoidung (ten_dang_nhap, mat_khau, ho_ten, vai_tro) 
+VALUES ('admin', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Quản trị viên', 'admin');
+
+-- Thêm một số trận đấu vòng bảng
+INSERT INTO tbl_trandau (bang_dau, doi_nha, doi_khach, thoi_gian, san_van_dong) VALUES 
+('A', 'Qatar', 'Ecuador', '2026-11-20 23:00:00', 'Al Bayt Stadium'),
+('A', 'Senegal', 'Hà Lan', '2026-11-21 23:00:00', 'Al Thumama Stadium'),
+('B', 'Anh', 'Iran', '2026-11-21 20:00:00', 'Khalifa International Stadium');
+
+-- Thêm vé mẫu cho trận khai mạc (Qatar vs Ecuador - id_trandau = 1)
+INSERT INTO tbl_ve (id_trandau, hang_ve, gia_tien, so_luong_tong, so_luong_con) VALUES 
+(1, 'Category 1', 200.00, 500, 500),
+(1, 'Category 2', 150.00, 1000, 1000),
+(1, 'VIP', 500.00, 100, 100);
