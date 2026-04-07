@@ -1,20 +1,22 @@
--- 1. Tạo database
-CREATE DATABASE IF NOT EXISTS banve_worldcup 
+-- 1. DATABASE
+CREATE DATABASE IF NOT EXISTS banve_bongda 
 DEFAULT CHARACTER SET utf8mb4 
 COLLATE utf8mb4_unicode_ci;
 
-USE banve_worldcup;
+USE banve_bongda;
 
--- 2. Xóa bảng (đúng thứ tự tránh lỗi FK)
+-- 2. DROP TABLE (đúng thứ tự)
 DROP TABLE IF EXISTS tbl_donhang;
 DROP TABLE IF EXISTS tbl_thanhtoan;
 DROP TABLE IF EXISTS tbl_ve;
 DROP TABLE IF EXISTS tbl_trandau;
+DROP TABLE IF EXISTS tbl_doibong;
+DROP TABLE IF EXISTS tbl_giaidau;
 DROP TABLE IF EXISTS tbl_hangve;
 DROP TABLE IF EXISTS tbl_nguoidung;
 
 -- =========================
--- 3. Bảng người dùng
+-- 3. NGƯỜI DÙNG
 -- =========================
 CREATE TABLE tbl_nguoidung (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -23,31 +25,52 @@ CREATE TABLE tbl_nguoidung (
     ho_ten VARCHAR(100),
     email VARCHAR(100) UNIQUE,
     sdt VARCHAR(15) UNIQUE,
-    ten_ngan_hang VARCHAR(100),
-    ma_the VARCHAR(20),
-    so_du DECIMAL(15,2) DEFAULT 0.00 CHECK (so_du >= 0),
+    so_du DECIMAL(15,2) DEFAULT 0 CHECK (so_du >= 0),
     vai_tro ENUM('admin', 'khach_hang') DEFAULT 'khach_hang',
-    ngay_tao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
 -- =========================
--- 4. Bảng trận đấu
+-- 4. GIẢI ĐẤU
+-- =========================
+CREATE TABLE tbl_giaidau (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    ten_giai VARCHAR(100) NOT NULL, -- EPL, La Liga
+    quoc_gia VARCHAR(100),
+    logo VARCHAR(255)
+) ENGINE=InnoDB;
+
+-- =========================
+-- 5. ĐỘI BÓNG
+-- =========================
+CREATE TABLE tbl_doibong (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    ten_doi VARCHAR(100) NOT NULL,
+    quoc_gia VARCHAR(100),
+    logo VARCHAR(255)
+) ENGINE=InnoDB;
+
+-- =========================
+-- 6. TRẬN ĐẤU
 -- =========================
 CREATE TABLE tbl_trandau (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    bang_dau CHAR(1) NOT NULL,
-    doi_nha VARCHAR(100) NOT NULL,
-    doi_khach VARCHAR(100) NOT NULL,
+    id_giaidau INT NOT NULL,
+    id_doi_nha INT NOT NULL,
+    id_doi_khach INT NOT NULL,
+
     thoi_gian DATETIME NOT NULL,
     san_van_dong VARCHAR(150),
+
     trang_thai ENUM('sap_dien_ra', 'dang_da', 'da_ket_thuc') DEFAULT 'sap_dien_ra',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+
+    FOREIGN KEY (id_giaidau) REFERENCES tbl_giaidau(id) ON DELETE CASCADE,
+    FOREIGN KEY (id_doi_nha) REFERENCES tbl_doibong(id),
+    FOREIGN KEY (id_doi_khach) REFERENCES tbl_doibong(id)
 ) ENGINE=InnoDB;
 
 -- =========================
--- 5. Bảng hạng vé (linh hoạt hơn ENUM)
+-- 7. HẠNG VÉ
 -- =========================
 CREATE TABLE tbl_hangve (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -55,73 +78,70 @@ CREATE TABLE tbl_hangve (
 ) ENGINE=InnoDB;
 
 -- =========================
--- 6. Bảng vé
+-- 8. VÉ
 -- =========================
 CREATE TABLE tbl_ve (
     id INT AUTO_INCREMENT PRIMARY KEY,
     id_trandau INT NOT NULL,
     id_hangve INT NOT NULL,
+
     gia_tien DECIMAL(15,2) NOT NULL CHECK (gia_tien >= 0),
-    so_luong_tong INT NOT NULL CHECK (so_luong_tong >= 0),
     so_luong_con INT NOT NULL CHECK (so_luong_con >= 0),
-    trang_thai ENUM('con_ve', 'het_ve', 'ngung_ban') DEFAULT 'con_ve',
 
     FOREIGN KEY (id_trandau) REFERENCES tbl_trandau(id) ON DELETE CASCADE,
-    FOREIGN KEY (id_hangve) REFERENCES tbl_hangve(id) ON DELETE CASCADE,
-
-    INDEX idx_trandau (id_trandau)
+    FOREIGN KEY (id_hangve) REFERENCES tbl_hangve(id)
 ) ENGINE=InnoDB;
 
 -- =========================
--- 7. Bảng thanh toán (lịch sử nạp tiền)
+-- 9. THANH TOÁN
 -- =========================
 CREATE TABLE tbl_thanhtoan (
     id INT AUTO_INCREMENT PRIMARY KEY,
     id_nguoidung INT NOT NULL,
     so_tien DECIMAL(15,2) NOT NULL CHECK (so_tien > 0),
-    phuong_thuc VARCHAR(50),
     trang_thai ENUM('thanh_cong', 'that_bai') DEFAULT 'thanh_cong',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
-    FOREIGN KEY (id_nguoidung) REFERENCES tbl_nguoidung(id) ON DELETE CASCADE
+    FOREIGN KEY (id_nguoidung) REFERENCES tbl_nguoidung(id)
 ) ENGINE=InnoDB;
 
 -- =========================
--- 8. Bảng đơn hàng (có snapshot)
+-- 10. ĐƠN HÀNG
 -- =========================
 CREATE TABLE tbl_donhang (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    id_nguoidung INT NOT NULL,
-    id_ve INT NOT NULL,
+    id_nguoidung INT,
+    id_ve INT,
 
-    so_luong_mua INT NOT NULL CHECK (so_luong_mua > 0),
-    tong_tien DECIMAL(15,2) NOT NULL,
+    so_luong INT,
+    tong_tien DECIMAL(15,2),
 
-    -- snapshot dữ liệu
+    -- snapshot
     ten_trandau VARCHAR(255),
     ten_hangve VARCHAR(50),
-    gia_ve DECIMAL(15,2),
 
     ngay_dat TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    trang_thai ENUM('thanh_cong', 'da_huy') DEFAULT 'thanh_cong',
 
-    FOREIGN KEY (id_nguoidung) REFERENCES tbl_nguoidung(id) ON DELETE CASCADE,
-    FOREIGN KEY (id_ve) REFERENCES tbl_ve(id) ON DELETE CASCADE,
-
-    INDEX idx_user (id_nguoidung)
+    FOREIGN KEY (id_nguoidung) REFERENCES tbl_nguoidung(id),
+    FOREIGN KEY (id_ve) REFERENCES tbl_ve(id)
 ) ENGINE=InnoDB;
 
 -- =========================
--- 9. DỮ LIỆU MẪU
+-- 11. DATA MẪU
 -- =========================
 
--- Admin
-INSERT INTO tbl_nguoidung (ten_dang_nhap, mat_khau, ho_ten, vai_tro) 
-VALUES ('admin', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Quản trị viên', 'admin');
+-- Giải đấu
+INSERT INTO tbl_giaidau (ten_giai, quoc_gia) VALUES
+('Premier League', 'Anh'),
+('La Liga', 'Tây Ban Nha'),
+('Champions League', 'Châu Âu');
+
+-- Đội bóng
+INSERT INTO tbl_doibong (ten_doi, quoc_gia) VALUES
+('Manchester United', 'Anh'),
+('Liverpool', 'Anh'),
+('Real Madrid', 'Tây Ban Nha'),
+('Barcelona', 'Tây Ban Nha');
 
 -- Hạng vé
-INSERT INTO tbl_hangve (ten_hang) VALUES 
-('Category 1'),
-('Category 2'),
-('Category 3'),
-('VIP');
+INSERT INTO tbl_hangve (ten_hang) VALUES
+('VIP'), ('A'), ('B'), ('C');
