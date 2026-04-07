@@ -1,6 +1,6 @@
 <?php
 $host = 'localhost';
-$dbname = 'banve_worldcup'; 
+$dbname = 'banve_bongda'; 
 $username = 'root';        
 $password = 'vertrigo';     
 

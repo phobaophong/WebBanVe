@@ -124,24 +124,3 @@ CREATE TABLE tbl_donhang (
     FOREIGN KEY (id_nguoidung) REFERENCES tbl_nguoidung(id),
     FOREIGN KEY (id_ve) REFERENCES tbl_ve(id)
 ) ENGINE=InnoDB;
-
--- =========================
--- 11. DATA MẪU
--- =========================
-
--- Giải đấu
-INSERT INTO tbl_giaidau (ten_giai, quoc_gia) VALUES
-('Premier League', 'Anh'),
-('La Liga', 'Tây Ban Nha'),
-('Champions League', 'Châu Âu');
-
--- Đội bóng
-INSERT INTO tbl_doibong (ten_doi, quoc_gia) VALUES
-('Manchester United', 'Anh'),
-('Liverpool', 'Anh'),
-('Real Madrid', 'Tây Ban Nha'),
-('Barcelona', 'Tây Ban Nha');
-
--- Hạng vé
-INSERT INTO tbl_hangve (ten_hang) VALUES
-('VIP'), ('A'), ('B'), ('C');
