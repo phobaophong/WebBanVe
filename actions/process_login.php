@@ -1,53 +1,49 @@
 <?php
-// BẮT BUỘC KHỞI TẠO SESSION TRƯỚC KHI LÀM BẤT CỨ ĐIỀU GÌ
 session_start();
-
 require_once '../config/database.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $username = trim($_POST['txt_username']);
-    $password = $_POST['txt_password'];
+    $username = trim($_POST['username']);
+    $password = $_POST['password'];
+
+    if (empty($username) || empty($password)) {
+        $_SESSION['error'] = "Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu!";
+        header("Location: ../pages/login.php");
+        exit();
+    }
 
     try {
-        // 1. Tìm tài khoản trong Database bằng Tên đăng nhập
-        $sql = "SELECT id, ten_dang_nhap, mat_khau, ho_ten, vai_tro, so_du FROM tbl_nguoidung WHERE ten_dang_nhap = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->execute([$username]);
-        
+        // Tìm user trong CSDL (Dùng PDO Prepare để chống SQL Injection tuyệt đối)
+        $stmt = $conn->prepare("SELECT id, ten_dang_nhap, mat_khau, vai_tro FROM tbl_nguoidung WHERE ten_dang_nhap = :username");
+        $stmt->execute(['username' => $username]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        // 2. Nếu tìm thấy user VÀ mật khẩu giải mã khớp nhau
+        // Kiểm tra xem có user này không, và mật khẩu giải mã ra có đúng không
         if ($user && password_verify($password, $user['mat_khau'])) {
-            
-            // 3. Cấp "thẻ nhớ" (Session) cho khách hàng
+            // Đăng nhập thành công -> Lưu thông tin vào Session
             $_SESSION['user_id'] = $user['id'];
-            $_SESSION['user_name'] = $user['ho_ten'];
+            $_SESSION['username'] = $user['ten_dang_nhap'];
             $_SESSION['role'] = $user['vai_tro'];
-            $_SESSION['balance'] = $user['so_du']; // Lưu số dư để lát hiển thị lên Menu
-
-            // 4. Kiểm tra vai trò để điều hướng
+            
+            // Chuyển hướng
             if ($user['vai_tro'] === 'admin') {
-                // Nếu là sếp tổng, mời vào trang quản trị
-                header("Location: ../admin/index.php");
+                header("Location: ../admin/index.php"); // Nếu là admin thì văng vào trang quản trị
             } else {
-                // Nếu là khách hàng, mời ra trang chủ lựa vé
-                header("Location: ../index.php");
+                header("Location: ../index.php"); // Khách hàng thì về trang chủ mua vé
             }
             exit();
-
         } else {
-            // Đăng nhập sai (Sai tên hoặc sai pass)
-            echo "<script>
-                    alert('Sai tên đăng nhập hoặc mật khẩu!');
-                    window.history.back();
-                  </script>";
+            $_SESSION['error'] = "Tên đăng nhập hoặc mật khẩu không chính xác!";
+            header("Location: ../pages/login.php");
+            exit();
         }
-
-    } catch (PDOException $e) {
-        echo "Lỗi hệ thống: " . $e->getMessage();
+    } catch(PDOException $e) {
+        $_SESSION['error'] = "Lỗi hệ thống: " . $e->getMessage();
+        header("Location: ../pages/login.php");
+        exit();
     }
 } else {
-    header("Location: ../index.php");
+    header("Location: ../pages/login.php");
     exit();
 }
 ?>

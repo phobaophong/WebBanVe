@@ -1,8 +1,9 @@
 <?php
-// File: actions/process_logout.php
 session_start();
-session_unset();    // Xóa tất cả các biến session (Tên, số dư, id...)
-session_destroy();  // Hủy hoàn toàn phiên làm việc
-header("Location: ../index.php"); // Đá về trang chủ
+session_unset();
+session_destroy();
+
+// Chuyển về trang chủ
+header("Location: ../index.php");
 exit();
 ?>
