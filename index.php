@@ -10,15 +10,10 @@ include 'includes/navbar.php';
     <aside class="sidebar-left">
         <ul class="league-menu">
             <li class="active"><a href="#">⚽ Lịch thi đấu hôm nay</a></li>
-            <li><a href="#" class="border-red">🏆 FA Cup</a></li>
             <li><a href="#" class="border-purple">🦁 Ngoại hạng Anh</a></li>
-            <li><a href="#" class="border-black">⭐ CUP C1</a></li>
-            <li><a href="#" class="border-orange">🔴 La Liga</a></li>
-            <li><a href="#" class="border-red">🇻🇳 V.League 1</a></li>
             <li><a href="#" class="border-blue">🔵 Serie A</a></li>
-            <li><a href="#" class="border-orange">🟠 UEFA Europa League</a></li>
             <li><a href="#" class="border-red">🦅 Bundesliga</a></li>
-            <li><a href="#" class="border-navy">🔷 Ligue 1</a></li>
+            <li><a href="#" class="border-navy">🔷 Laliga</a></li>
         </ul>
     </aside>
 

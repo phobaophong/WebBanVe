@@ -5,7 +5,6 @@
     
     <ul class="nav-links">
         <li><a href="<?php echo $base_url; ?>/index.php">Trang Chủ</a></li>
-        <li><a href="<?php echo $base_url; ?>/pages/match_list.php">Lịch Thi Đấu</a></li>
         
         <?php if (isset($_SESSION['user_id'])): ?>
             <li><span class="user-greeting">Xin chào, <?php echo htmlspecialchars($_SESSION['username']); ?>!</span></li>
