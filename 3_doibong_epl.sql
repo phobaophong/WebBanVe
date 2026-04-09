@@ -19,3 +19,4 @@ INSERT INTO tbl_doibong (ten_doi, quoc_gia) VALUES
 ('Tottenham', 'Anh'),                 -- ID 18
 ('West Ham', 'Anh'),                  -- ID 19
 ('Wolverhampton Wanderers', 'Anh');   -- ID 20
+
