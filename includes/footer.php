@@ -19,12 +19,11 @@
                 <div class="footer-col footer-contact col-12 col-md-3">
                     <h4>LIÊN HỆ</h4>
                     <p>CÔNG TY TNHH BÁN VÉ BÓNG ĐÁ</p>
-                    <p>Địa chỉ: Số 109 Phố Huế, Hà Nội</p>
-                    <p>Email: info@cahnfc.com | Hotline: 0866675978</p>
+                    <p>Địa chỉ: Long Xuyên, An Giang</p>
+                    <p>Email: thuanvaphong@gmail.com | Hotline: 0916128756</p>
                     <div class="socials">
-                        <a href="#" aria-label="Facebook" class="social-icon">f</a>
-                        <a href="#" aria-label="Instagram" class="social-icon">ig</a>
-                        <a href="#" aria-label="YouTube" class="social-icon">yt</a>
+                        <a href="https://www.facebook.com/share/1Cq5GiMmrU/?mibextid=wwXIfr" target="_blank" aria-label="Facebook" class="social-icon">f</a>
+                        <a href="https://zalo.me/0922452700" target="_blank" aria-label="Zalo" class="social-icon">zalo</a>
                     </div>
                 </div>
 
