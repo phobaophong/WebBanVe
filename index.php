@@ -5,132 +5,266 @@ include 'includes/header.php';
 include 'includes/navbar.php';
 
 // ==========================================================================
-// XỬ LÝ LOGIC LỌC TRẬN ĐẤU (FILTER)
+// 1. LẤY DANH SÁCH ĐỘI BÓNG & ĐẾM SỐ TRẬN
+// ==========================================================================
+$sql_teams = "SELECT d.id, d.ten_doi, 
+                   (SELECT COUNT(*) FROM tbl_trandau t 
+                    WHERE t.trang_thai = 'sap_dien_ra' 
+                    AND (t.id_doi_nha = d.id OR t.id_doi_khach = d.id)) AS so_tran
+              FROM tbl_doibong d 
+              HAVING so_tran > 0 
+              ORDER BY d.ten_doi ASC";
+$stmt_teams = $conn->query($sql_teams);
+$teams_list = $stmt_teams->fetchAll(PDO::FETCH_ASSOC);
+
+// ==========================================================================
+// 2. XỬ LÝ LOGIC LỌC TÌM KIẾM
 // ==========================================================================
 $where_clause = "t.trang_thai = 'sap_dien_ra'";
 $params = [];
-$active_menu = 'upcoming'; 
-$show_view_all_btn = false; // Biến điều khiển việc hiển thị nút "Xem tất cả"
 
+// Lọc theo giải đấu
 if (isset($_GET['league_id'])) {
     $where_clause .= " AND t.id_giaidau = :league_id";
     $params['league_id'] = $_GET['league_id'];
     $active_menu = 'league_' . $_GET['league_id'];
-    
-    // Kiểm tra xem khách đang ở chế độ xem 7 ngày hay chế độ "Xem tất cả"
-    if (!isset($_GET['view']) || $_GET['view'] !== 'all') {
-        // NẾU CHƯA BẤM NÚT: Chỉ lọc 7 ngày tới và bật cờ hiển thị nút
-        $where_clause .= " AND DATE(t.thoi_gian) BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 7 DAY)";
-        $show_view_all_btn = true;
-    }
-} elseif (isset($_GET['filter']) && $_GET['filter'] == 'all') {
-    $active_menu = 'all';
 } else {
-    // MẶC ĐỊNH TRANG CHỦ: Lọc 7 ngày tới (không hiện nút vì đã có menu bên trái lo)
+    $active_menu = 'upcoming';
+}
+
+// Lọc theo khoảng thời gian
+if (!empty($_GET['from_date'])) {
+    $where_clause .= " AND DATE(t.thoi_gian) >= :from_date";
+    $params[':from_date'] = $_GET['from_date'];
+}
+if (!empty($_GET['to_date'])) {
+    $where_clause .= " AND DATE(t.thoi_gian) <= :to_date";
+    $params[':to_date'] = $_GET['to_date'];
+}
+
+// Lọc theo Đội bóng
+$selected_teams = isset($_GET['teams']) && is_array($_GET['teams']) ? $_GET['teams'] : [];
+if (!empty($selected_teams)) {
+    $team_placeholders = [];
+    foreach ($selected_teams as $index => $team_id) {
+        $param_name = ":team_" . $index;
+        $team_placeholders[] = $param_name;
+        $params[$param_name] = $team_id;
+    }
+    $in_clause = implode(',', $team_placeholders);
+    $where_clause .= " AND (t.id_doi_nha IN ($in_clause) OR t.id_doi_khach IN ($in_clause))";
+}
+
+// Mặc định 7 ngày
+if (empty($_GET['from_date']) && empty($_GET['to_date']) && empty($selected_teams) && empty($_GET['league_id'])) {
     $where_clause .= " AND DATE(t.thoi_gian) BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 7 DAY)";
+    $page_title = "CÁC TRẬN ĐẤU TRONG TUẦN TỚI";
+} else {
+    $page_title = "KẾT QUẢ TÌM KIẾM";
 }
 ?>
 
-<div class="container home-layout">
-    
-    <aside class="sidebar-left">
-        <ul class="league-menu">
-            <li class="<?php echo ($active_menu == 'upcoming') ? 'active' : ''; ?>">
-                <a href="index.php">🌍 Các trận đấu sắp tới</a>
-            </li>
-            <li class="<?php echo ($active_menu == 'league_1') ? 'active' : ''; ?>">
-                <a href="index.php?league_id=1" class="border-purple">🦁 Ngoại hạng Anh</a>
-            </li>
-            <li><a href="#" class="border-blue">🔵 Serie A</a></li>
-            <li><a href="#" class="border-red">🦅 Bundesliga</a></li>
-            <li><a href="#" class="border-orange">🔴 Laliga</a></li>
-        </ul>
-    </aside>
+<div class="container mt-4">
+    <div id="leagueBanner" class="carousel slide shadow-sm league-banner-container" data-ride="carousel" data-interval="5000">
+        <ol class="carousel-indicators">
+            <li data-target="#leagueBanner" data-slide-to="0" class="active"></li>
+            <li data-target="#leagueBanner" data-slide-to="1"></li>
+            <li data-target="#leagueBanner" data-slide-to="2"></li>
+            <li data-target="#leagueBanner" data-slide-to="3"></li>
+        </ol>
+        <div class="carousel-inner">
+            <div class="carousel-item active"><img src="assets/images/banners/banner1.png" class="d-block w-100 banner-img"></div>
+            <div class="carousel-item"><img src="assets/images/banners/banner2.png" class="d-block w-100 banner-img"></div>
+            <div class="carousel-item"><img src="assets/images/banners/banner3.png" class="d-block w-100 banner-img"></div>
+            <div class="carousel-item"><img src="assets/images/banners/banner4.png" class="d-block w-100 banner-img"></div>
+        </div>
+        <button class="carousel-control-prev carousel-control-btn" type="button" data-target="#leagueBanner" data-slide="prev">
+            <span class="carousel-control-prev-icon"></span>
+        </button>
+        <button class="carousel-control-next carousel-control-btn" type="button" data-target="#leagueBanner" data-slide="next">
+            <span class="carousel-control-next-icon"></span>
+        </button>
+    </div>
+</div>
 
-    <main class="main-center">
-        <?php
-        // Đổi tiêu đề động để khách hàng biết họ đang xem gì
-        if ($active_menu == 'upcoming') {
-            echo "<h1 class='page-title'>CÁC TRẬN ĐẤU TRONG TUẦN TỚI</h1>";
-        } elseif (isset($_GET['league_id'])) {
-            if (isset($_GET['view']) && $_GET['view'] == 'all') {
-                echo "<h1 class='page-title'>TẤT CẢ TRẬN ĐẤU CỦA GIẢI</h1>";
-            } else {
-                echo "<h1 class='page-title'>LỊCH THI ĐẤU GIẢI (7 NGÀY TỚI)</h1>";
-            }
-        }
-        ?>
-        <p class="subtitle">Nhanh tay đặt vé để không bỏ lỡ những trận cầu đỉnh cao!</p>
+<div class="container mt-3 mb-2">
+    <ul class="league-nav-horizontal">
+        <li class="<?php echo ($active_menu == 'upcoming') ? 'active' : ''; ?>">
+            <a href="index.php">
+                <span class="league-icon" style="line-height: 1;">🌍</span> Các trận sắp tới
+            </a>
+        </li>
+        <li class="<?php echo ($active_menu == 'league_1') ? 'active' : ''; ?>">
+            <a href="index.php?league_id=1">
+                <img src="assets/images/logos_giaidau/logo1.png" alt="EPL" class="league-icon" width="24" height="24"> Ngoại hạng Anh
+            </a>
+        </li>
+        <li class="<?php echo ($active_menu == 'league_2') ? 'active' : ''; ?>">
+            <a href="index.php?league_id=2">
+                <img src="assets/images/logos_giaidau/logo2.png" alt="Serie A" class="league-icon" width="24" height="24"> Serie A
+            </a>
+        </li>
+        <li class="<?php echo ($active_menu == 'league_3') ? 'active' : ''; ?>">
+            <a href="index.php?league_id=3">
+                <img src="assets/images/logos_giaidau/logo3.png" alt="Bundesliga" class="league-icon" width="24" height="24"> Bundesliga
+            </a>
+        </li>
+        <li class="<?php echo ($active_menu == 'league_4') ? 'active' : ''; ?>">
+            <a href="index.php?league_id=4">
+                <img src="assets/images/logos_giaidau/logo4.png" alt="La Liga" class="league-icon" width="24" height="24"> Laliga
+            </a>
+        </li>
+    </ul>
+</div>
 
-        <div class="match-grid">
-            <?php
-            $sql = "SELECT t.id, t.thoi_gian, t.san_van_dong, t.id_doi_nha, t.id_doi_khach,
-                           g.ten_giai, 
-                           dn.ten_doi AS ten_doi_nha, 
-                           dk.ten_doi AS ten_doi_khach
-                    FROM tbl_trandau t
-                    JOIN tbl_giaidau g ON t.id_giaidau = g.id
-                    JOIN tbl_doibong dn ON t.id_doi_nha = dn.id
-                    JOIN tbl_doibong dk ON t.id_doi_khach = dk.id
-                    WHERE $where_clause
-                    ORDER BY t.thoi_gian ASC";
-            
-            $stmt = $conn->prepare($sql);
-            $stmt->execute($params);
+<div class="container">
+    <div class="row mt-2">
+        
+        <aside class="col-12 col-lg-3 mb-4 mb-lg-0">
+            <div class="sidebar-box">
+                <h4 class="sidebar-heading">
+                    <span class="sidebar-icon">⧉</span> LỌC NÂNG CAO
+                </h4>
+                
+                <form action="index.php" method="GET">
+                    <?php if(isset($_GET['league_id'])): ?>
+                        <input type="hidden" name="league_id" value="<?php echo $_GET['league_id']; ?>">
+                    <?php endif; ?>
 
-            if ($stmt->rowCount() > 0) {
-                while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                    $thoi_gian_format = date('H:i - d/m/Y', strtotime($row['thoi_gian']));
+                    <div class="form-group mb-4">
+                        <label class="filter-label">Ngày thi đấu</label>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <input type="date" name="from_date" class="form-control date-input" style="width: 100%; font-size: 13px;" value="<?php echo isset($_GET['from_date']) ? $_GET['from_date'] : ''; ?>">
+                            <div style="text-align: center; color: #999; font-weight: bold; line-height: 1;">↓</div>
+                            <input type="date" name="to_date" class="form-control date-input" style="width: 100%; font-size: 13px;" value="<?php echo isset($_GET['to_date']) ? $_GET['to_date'] : ''; ?>">
+                        </div>
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <label class="filter-label">Đội bóng</label>
+                        <div class="team-list-scroll">
+                            <?php foreach($teams_list as $team): ?>
+                                <?php $is_checked = in_array($team['id'], $selected_teams) ? 'checked' : ''; ?>
+                                <div class="custom-control custom-checkbox mb-2 team-checkbox-item">
+                                    <div class="team-checkbox-label-wrapper">
+                                        <input type="checkbox" class="custom-control-input" id="team_<?php echo $team['id']; ?>" name="teams[]" value="<?php echo $team['id']; ?>" <?php echo $is_checked; ?>>
+                                        <label class="custom-control-label team-label" for="team_<?php echo $team['id']; ?>">
+                                            <img src="assets/images/logos/<?php echo $team['id']; ?>.png" onerror="this.src='assets/images/logos/default.png'" class="team-filter-logo" width="20" height="20">
+                                            <?php echo htmlspecialchars($team['ten_doi']); ?>
+                                        </label>
+                                    </div>
+                                    <span class="team-count">(<?php echo $team['so_tran']; ?>)</span>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-success btn-block btn-filter">ÁP DỤNG LỌC</button>
                     
-                    $path_nha = "assets/images/logos/" . $row['id_doi_nha'] . ".png";
-                    $path_khach = "assets/images/logos/" . $row['id_doi_khach'] . ".png";
+                    <?php if(!empty($_GET['from_date']) || !empty($_GET['to_date']) || !empty($selected_teams)): ?>
+                        <a href="index.php<?php echo isset($_GET['league_id']) ? '?league_id='.$_GET['league_id'] : ''; ?>" class="btn btn-outline-secondary btn-block mt-2">Xóa bộ lọc</a>
+                    <?php endif; ?>
+                </form>
+            </div>
+        </aside>
 
-                    $logo_nha = file_exists($path_nha) ? $path_nha : "assets/images/logos/default.png";
-                    $logo_khach = file_exists($path_khach) ? $path_khach : "assets/images/logos/default.png";
+        <main class="col-12 col-lg-6 main-center">
+            <h1 class='page-title'><?php echo $page_title; ?></h1>
+            <p class="subtitle mb-4">Nhanh tay đặt vé để không bỏ lỡ những trận cầu đỉnh cao!</p>
 
-                    echo "<div class='match-card'>";
-                    echo "<span class='league-name'>" . htmlspecialchars($row['ten_giai']) . "</span>";
-                    
-                    echo "<div class='team-matchup'>";
-                    echo "  <div class='team'><img src='$logo_nha' alt='Nhà' class='team-logo'><p>" . htmlspecialchars($row['ten_doi_nha']) . "</p></div>";
-                    echo "  <div class='vs-box'><b>VS</b></div>";
-                    echo "  <div class='team'><img src='$logo_khach' alt='Khách' class='team-logo'><p>" . htmlspecialchars($row['ten_doi_khach']) . "</p></div>";
-                    echo "</div>";
+            <div class="match-grid">
+                <?php
+                $sql = "SELECT t.id, t.thoi_gian, t.san_van_dong, t.id_doi_nha, t.id_doi_khach,
+                               g.ten_giai, 
+                               dn.ten_doi AS ten_doi_nha, 
+                               dk.ten_doi AS ten_doi_khach
+                        FROM tbl_trandau t
+                        JOIN tbl_giaidau g ON t.id_giaidau = g.id
+                        JOIN tbl_doibong dn ON t.id_doi_nha = dn.id
+                        JOIN tbl_doibong dk ON t.id_doi_khach = dk.id
+                        WHERE $where_clause
+                        ORDER BY t.thoi_gian ASC";
+                
+                $stmt = $conn->prepare($sql);
+                $stmt->execute($params);
+                
+                // Lấy toàn bộ kết quả vào mảng để đếm
+                $all_matches = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                $total_matches = count($all_matches);
+                
+                // Kiểm tra xem khách có đang bấm "Xem tất cả" hay không
+                $is_view_all = isset($_GET['view']) && $_GET['view'] == 'all';
+                $display_limit = $is_view_all ? $total_matches : 4; 
+                $show_btn = (!$is_view_all && $total_matches > 4);
 
-                    echo "<p><b>Thời gian:</b> $thoi_gian_format</p>";
-                    echo "<p><b>Sân:</b> " . htmlspecialchars($row['san_van_dong']) . "</p>";
-                    
-                    echo "<a href='pages/checkout.php?id_trandau=" . $row['id'] . "' class='btn btn-primary btn-block'>MUA VÉ NGAY</a>";
-                    echo "</div>";
+                if ($total_matches > 0) {
+                    $count = 0;
+                    foreach($all_matches as $row) {
+                        // Nếu chưa chọn xem tất cả mà đã lặp đủ 4 trận thì ngắt vòng lặp (giấu bớt)
+                        if ($count >= $display_limit) break;
+
+                        $thoi_gian_format = date('H:i - d/m/Y', strtotime($row['thoi_gian']));
+                        $path_nha = "assets/images/logos/" . $row['id_doi_nha'] . ".png";
+                        $path_khach = "assets/images/logos/" . $row['id_doi_khach'] . ".png";
+
+                        $logo_nha = file_exists($path_nha) ? $path_nha : "assets/images/logos/default.png";
+                        $logo_khach = file_exists($path_khach) ? $path_khach : "assets/images/logos/default.png";
+
+                        echo "<div class='match-card'>";
+                        echo "<span class='league-name'>" . htmlspecialchars($row['ten_giai']) . "</span>";
+                        
+                        echo "<div class='team-matchup'>";
+                        echo "  <div class='team'><img src='$logo_nha' alt='Nhà' class='team-logo' width='60' height='60'><p class='team-name'>" . htmlspecialchars($row['ten_doi_nha']) . "</p></div>";
+                        echo "  <div class='vs-box'><b>VS</b></div>";
+                        echo "  <div class='team'><img src='$logo_khach' alt='Khách' class='team-logo' width='60' height='60'><p class='team-name'>" . htmlspecialchars($row['ten_doi_khach']) . "</p></div>";
+                        echo "</div>";
+
+                        echo "<p class='match-time'><b>Thời gian:</b> $thoi_gian_format</p>";
+                        echo "<p class='match-stadium'><b>Sân:</b> " . htmlspecialchars($row['san_van_dong']) . "</p>";
+                        
+                        echo "<a href='pages/checkout.php?id_trandau=" . $row['id'] . "' class='btn btn-primary btn-block'>MUA VÉ NGAY</a>";
+                        echo "</div>";
+                        
+                        $count++;
+                    }
+                } else {
+                    echo "<div class='widget-box text-center empty-state-box'>
+                            <h5 class='empty-state-title'>Không tìm thấy trận đấu nào!</h5>
+                            <p>Vui lòng thay đổi ngày hoặc chọn đội bóng khác.</p>
+                          </div>";
                 }
-            } else {
-                echo "<div class='widget-box text-center' style='grid-column: 1 / -1;'>Hiện chưa có trận đấu nào trong thời gian này.</div>";
+                ?>
+            </div>
+
+            <?php
+            // NẾU CÓ NHIỀU HƠN 4 TRẬN -> HIỂN THỊ NÚT XEM THÊM Ở DƯỚI CÙNG
+            if ($show_btn) {
+                // Giữ lại toàn bộ cấu hình lọc hiện tại và nối thêm biến view=all
+                $get_params = $_GET;
+                $get_params['view'] = 'all';
+                $view_all_url = 'index.php?' . http_build_query($get_params);
+                
+
+                echo "<div style='text-align: center; margin-top: 30px; margin-bottom: 20px;'>";
+                echo "  <a href='" . htmlspecialchars($view_all_url) . "' class='btn btn-warning' style='padding: 10px 30px; border-radius: 30px; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.1);'>";
+                echo "      Hiển thị thêm " ;
+                echo "  </a>";
+                echo "</div>";
             }
             ?>
-        </div>
+        </main>
 
-        <?php
-        // NÚT XEM TẤT CẢ NẰM ĐỘC LẬP BÊN DƯỚI LƯỚI TRẬN ĐẤU
-        if ($show_view_all_btn) {
-            echo "<div style='text-align: center; margin-top: 30px; margin-bottom: 20px;'>";
-            echo "  <a href='index.php?league_id=" . $_GET['league_id'] . "&view=all' class='btn btn-warning' style='padding: 12px 30px; border-radius: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); font-size: 16px;'>Xem tất cả lịch thi đấu của giải này ⬇️</a>";
-            echo "</div>";
-        }
-        ?>
-
-    </main>
-
-    <aside class="sidebar-right">
-        <div class="widget-box" style="margin-bottom: 20px;">
-            <h3>📰 Bảng Tin Thể Thao</h3>
-            <p class="footer-subtext">Đang cập nhật.</p>
-        </div>
-        <div class="widget-box">
-            <h3>🔥 Bảng Xếp Hạng</h3>
-            <p class="footer-subtext">Đang cập nhật.</p>
-        </div>
-    </aside>
-
+        <aside class="col-12 col-lg-3 sidebar-right">
+            <div class="widget-box mb-3">
+                <h3>📰 Bảng Tin Thể Thao</h3>
+                <p class="footer-subtext">Đang cập nhật.</p>
+            </div>
+            <div class="widget-box">
+                <h3>🔥 Bảng Xếp Hạng</h3>
+                <p class="footer-subtext">Đang cập nhật.</p>
+            </div>
+        </aside>
+    </div>
 </div>
 
 <?php include 'includes/footer.php'; ?>
