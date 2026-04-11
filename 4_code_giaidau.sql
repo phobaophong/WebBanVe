@@ -1,1 +1,0 @@
-INSERT INTO tbl_giaidau (ten_giai) VALUES ('Ngoại hạng Anh (EPL)'); -- Có ID = 1

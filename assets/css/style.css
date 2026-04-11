@@ -1,226 +1,475 @@
 /* ==========================================================================
-   1. RESET & BIẾN TOÀN CỤC (GLOBAL)
+   PHẦN 1: THIẾT LẬP CHUNG (GLOBAL)
    ========================================================================== */
-* { box-sizing: border-box; margin: 0; padding: 0; }
-
 :root {
-    --primary: #c83b33; /* deep red */
-    --primary-dark: #8f2a23;
-    --accent: #ffd67a;
-    --bg: #f8f9fa;
-    --muted: #6c757d;
-    --container-max: 100%;
+   --primary-color: #28a745;
+   --primary-dark: #218838;
+   --accent-color: #1E90FF;
+   --bg-color: #f4f7f6;
+   --text-color: #333;
+   --container-max: 95%;
+   /* Ép sát màn hình */
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: var(--bg);
-    color: #222;
-    line-height: 1.6;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
+   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+   background-color: var(--bg-color);
+   color: var(--text-color);
+   line-height: 1.6;
+   display: flex;
+   flex-direction: column;
+   min-height: 100vh;
 }
 
-a { text-decoration: none; }
-ul { list-style: none; }
-
-.container { max-width: var(--container-max); margin: 0 auto; padding: 20px; width: 100%; flex: 1; }
-
-/* ==========================================================================
-   2. THANH ĐIỀU HƯỚNG (NAVBAR & FOOTER)
-   ========================================================================== */
-.navbar { box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
-.navbar .navbar-brand { font-weight: 700; color: #fff !important; }
-.navbar .nav-link { color: rgba(255,255,255,0.92) !important; }
-.navbar .nav-link:hover { color: var(--accent) !important; }
-
-.btn-admin-nav { background: var(--primary); padding: 6px 12px; border-radius: 4px; }
-.btn-admin-nav:hover { background: var(--primary-dark); color: white !important; }
-
-/* Footer styles - custom site footer matching provided design */
-.site-footer { background: linear-gradient(180deg, var(--primary) 0%, var(--primary-dark) 100%); color: #fff; }
-.site-footer .footer-top { display: flex; gap: 30px; align-items: flex-start; justify-content: space-between; max-width: 1440px; margin: 0 auto; padding: 60px 20px; }
-.site-footer .footer-col { flex: 1; min-width: 200px; }
-.site-footer .footer-logo img { width: 120px; height: 120px; object-fit: contain; border-radius: 50%; background: #fff; padding: 8px; }
-.site-footer h4 { color: #fff; margin-bottom: 12px; font-size: 18px; }
-.site-footer .footer-nav ul { list-style: none; padding: 0; }
-.site-footer .footer-nav ul li { margin-bottom: 8px; }
-.site-footer .footer-nav a { color: rgba(255,255,255,0.95); text-decoration: none; font-weight: 600; }
-.site-footer .footer-nav a:hover { color: #ffd9d6; }
-.site-footer .footer-contact p { margin: 6px 0; color: rgba(255,255,255,0.95); }
-.site-footer .socials { margin-top: 10px; display: flex; gap: 8px; }
-.site-footer .social-icon { display: inline-flex; width: 34px; height: 34px; align-items: center; justify-content: center; border-radius: 50%; background: rgba(255,255,255,0.12); color: #fff; text-decoration: none; font-weight: bold; }
-.site-footer .footer-license img { max-width: 140px; display: block; margin-top: 8px; }
-.site-footer .footer-bottom { background: #5a1b1a; padding: 14px 20px; text-align: center; font-weight: 600; }
-
-@media (max-width: 900px) {
-   .site-footer .footer-top { flex-direction: column; align-items: center; text-align: center; padding: 40px 20px; }
-   .site-footer .footer-col { width: 100%; }
-   .site-footer .footer-logo img { width: 96px; height: 96px; }
+.container {
+   max-width: var(--container-max) !important;
+   flex: 1;
 }
 
-.footer-subtext { font-size: 13px; margin-top: 5px; color: #bbb; }
+a:hover {
+   text-decoration: none;
+}
+
+ul {
+   list-style: none;
+   padding: 0;
+   margin: 0;
+}
 
 /* ==========================================================================
-   3. TRANG CHỦ - DANH SÁCH TRẬN ĐẤU (MATCH GRID)
+   PHẦN 2: STYLE CHO NAVBAR
    ========================================================================== */
-.match-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; margin-top: 30px; }
-.match-card { background: #fff; border: 1px solid #e9e9e9; border-radius: 10px; padding: 18px; text-align: center; box-shadow: 0 6px 18px rgba(17,24,39,0.06); transition: transform 0.18s, box-shadow 0.18s; }
-.match-card:hover { transform: translateY(-6px); box-shadow: 0 10px 28px rgba(17,24,39,0.08); }
+.custom-navbar {
+   background: var(--accent-color);
+   padding: 15px 30px;
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   color: white;
+   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.custom-navbar .logo a {
+   color: white;
+   font-size: 24px;
+   font-weight: bold;
+}
+
+.custom-navbar .nav-links {
+   display: flex;
+   gap: 20px;
+   align-items: center;
+}
+
+.custom-navbar .nav-links li a {
+   color: white;
+   font-weight: 500;
+   transition: color 0.3s;
+}
+
+.custom-navbar .nav-links li a:hover {
+   color: #FFD700;
+}
+
+.user-greeting {
+   color: #FFD700;
+   font-weight: bold;
+}
+
+.btn-admin-nav {
+   background: var(--primary-color);
+   padding: 6px 12px;
+   border-radius: 4px;
+   color: white !important;
+}
+
+.btn-admin-nav:hover {
+   background: var(--primary-dark);
+}
+
+.logout-link {
+   color: #ffcccc !important;
+}
+
+.logout-link:hover {
+   color: #ff4d4d !important;
+}
+
+.nav-btn-register {
+   background: white;
+   color: var(--accent-color) !important;
+   padding: 6px 15px;
+   border-radius: 20px;
+}
+
+.nav-btn-register:hover {
+   background: #f0f0f0;
+}
+
+.warning-ticker {
+   background-color: #dc3545;
+   color: white;
+   padding: 4px 0;
+   overflow: hidden;
+   white-space: nowrap;
+   position: relative;
+   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.warning-ticker p {
+   display: inline-block;
+   margin: 0;
+   padding-left: 100%;
+   animation: ticker-scroll 25s linear infinite;
+   font-size: 13px;
+   font-weight: bold;
+   font-style: italic;
+   letter-spacing: 1px;
+}
+
+@keyframes ticker-scroll {
+   0% {
+      transform: translateX(0);
+   }
+
+   100% {
+      transform: translateX(-100%);
+   }
+}
 
 /* ==========================================================================
-   4. NÚT BẤM (BUTTONS) & FORMS
+   PHẦN 3: STYLE CHO FOOTER
    ========================================================================== */
-.btn { display: inline-block; padding: 10px 20px; border-radius: 5px; cursor: pointer; border: none; font-weight: bold; text-align: center; transition: background 0.3s; }
-.btn-primary { background: #28a745; color: white; }
-.btn-primary:hover { background: #218838; }
-.btn-warning { background: #ffc107; color: black; }
-.btn-danger { background: #dc3545; color: white; }
-.form-group { margin-bottom: 15px; }
-.form-control { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; }
+.site-footer {
+   background: #333;
+   color: #ddd;
+   margin-top: 50px;
+}
+
+.footer-bottom {
+   padding: 20px;
+   text-align: center;
+}
+
+.footer-bottom p {
+   margin: 0;
+}
+
+.footer-subtext {
+   font-size: 13px;
+   margin-top: 5px;
+   color: #bbb;
+}
 
 /* ==========================================================================
-   5. CÁC CLASS TIỆN ÍCH (UTILITIES)
+   PHẦN 4: BANNER QUẢNG CÁO & MENU GIẢI ĐẤU NGANG
    ========================================================================== */
-.page-title { text-align: center; color: #1E90FF; margin-top: 20px; font-size: 26px; }
-.subtitle, .text-center { text-align: center; }
-.league-name { color: #888; font-size: 12px; display: block; margin-bottom: 15px; border-bottom: 1px dashed #ddd; padding-bottom: 5px; }
-.vs-text { color: red; margin: 0 10px; font-weight: bold; }
+.league-banner-container {
+   border-radius: 12px;
+   overflow: hidden;
+}
 
-/* ==========================================================================
-   6. HIỆU ỨNG CHỮ CHẠY (TICKER)
-   ========================================================================== */
-.warning-ticker { background-color: #dc3545; color: white; padding: 4px 0; overflow: hidden; white-space: nowrap; position: relative; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-.warning-ticker p { display: inline-block; margin: 0; padding-left: 100%; animation: ticker-scroll 25s linear infinite; font-size: 13px; font-weight: bold; font-style: italic; letter-spacing: 1px; }
-@keyframes ticker-scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+.banner-img {
+   height: 350px;
+   object-fit: cover;
+}
 
-/* ==========================================================================
-   7. BỐ CỤC TRANG CHỦ 3 CỘT (HOME LAYOUT)
-   ========================================================================== */
-.home-layout { display: grid; grid-template-columns: 240px 1fr 260px; gap: 25px; align-items: start; margin-top: 30px; }
-.sidebar-left { background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); padding: 10px 0; }
-.league-menu a { display: flex; align-items: center; padding: 12px 20px; color: #444; font-size: 15px; border-left: 3px solid transparent; transition: all 0.2s ease-in-out; }
-.league-menu a:hover { background-color: #f9f9f9; }
-.league-menu a.border-red:hover { border-left-color: #e53935; color: #e53935; }
-.league-menu a.border-purple:hover { border-left-color: #4a148c; color: #4a148c; }
-.league-menu a.border-black:hover { border-left-color: #212121; color: #212121; }
-.league-menu a.border-orange:hover { border-left-color: #ff9800; color: #ff9800; }
-.league-menu a.border-blue:hover { border-left-color: #1e88e5; color: #1e88e5; }
-.league-menu a.border-navy:hover { border-left-color: #1a237e; color: #1a237e; }
-.league-menu li.active a { color: #4caf50; border-left-color: #4caf50; background-color: #f1f8e9; font-weight: bold; }
+.carousel-control-btn {
+   border: none;
+   background: transparent;
+}
 
-.widget-box { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-.widget-box h3 { font-size: 16px; color: #333; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; margin-bottom: 15px; }
-
-@media (max-width: 1024px) { .home-layout { grid-template-columns: 1fr; } }
-
-/* ==========================================================================
-   8. TÙY CHỈNH HIỂN THỊ LOGO TRẬN ĐẤU
-   ========================================================================== */
-.team-matchup { display: flex; justify-content: space-between; align-items: flex-start; margin: 15px 0; }
-.team { flex: 1; text-align: center; }
-.team-logo { width: 60px; height: 60px; object-fit: contain; margin-bottom: 5px; }
-.team p { font-size: 15px; font-weight: bold; margin: 0; line-height: 1.2; }
-.vs-box { padding: 5px 10px; background: #f0f0f0; color: red; border-radius: 4px; font-size: 14px; margin-top: 15px; }
-
-/* ==========================================================================
-   9. GIAO DIỆN XÁC THỰC (ĐĂNG NHẬP / ĐĂNG KÝ)
-   ========================================================================== */
-.auth-container { max-width: 400px; margin: 50px auto; background: white; border: 1px solid #e0e0e0; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-.auth-title { text-align: center; color: #1E90FF; margin-top: 0; margin-bottom: 20px; font-size: 24px; }
-.alert-error { color: #721c24; background-color: #f8d7da; border: 1px solid #f5c6cb; padding: 10px; border-radius: 4px; text-align: center; margin-bottom: 15px; font-size: 14px; }
-.btn-block { display: block; width: 100%; margin-top: 20px; font-size: 16px; padding: 12px; }
-
-/* ==========================================================================
-   10. TRANG ĐẶT VÉ (CHECKOUT)
-   ========================================================================== */
-.checkout-container { max-width: 800px; margin: 40px auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-.match-summary { background: #f8f9fa; border: 1px solid #e0e0e0; padding: 20px; border-radius: 8px; margin-bottom: 25px; text-align: center; }
-
-/* ==========================================================================
-   11. BỔ SUNG CLASS THAY THẾ CHO STYLE INLINE (INDEX.PHP)
-   ========================================================================== */
-/* Banner Carousel */
-.league-banner-container { border-radius: 12px; overflow: hidden; }
-.banner-img { height: 350px; object-fit: cover; }
-.carousel-control-btn { border: none; background: transparent; }
-
-/* Sidebar Lọc và Menu */
-.sidebar-box { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border: 1px solid #eee; margin-bottom: 20px; }
-.sidebar-heading { font-size: 16px; font-weight: bold; color: #333; margin-bottom: 20px; text-transform: uppercase; }
-.sidebar-icon { color: #28a745; margin-right: 5px; }
-.filter-label { font-size: 14px; font-weight: bold; color: #555; border-bottom: 1px solid #28a745; display: inline-block; padding-bottom: 5px; margin-bottom: 15px; }
-
-/* Form Ngày tháng */
-.date-filter-row { display: flex; justify-content: space-between; align-items: center; }
-.date-input { font-size: 12px; padding: 5px; width: 45%; }
-.date-separator { color: #999; font-weight: bold; }
-
-/* Form Checkbox Đội bóng */
-.team-list-scroll { max-height: 250px; overflow-y: auto; padding-right: 5px; }
-.team-checkbox-item { display: flex; justify-content: space-between; align-items: center; }
-.team-checkbox-label-wrapper { display: flex; align-items: center; }
-.team-label { font-size: 14px; cursor: pointer; padding-top: 2px; }
-.team-filter-logo { width: 20px; height: 20px; object-fit: contain; margin: 0 8px; }
-.team-count { color: #28a745; font-size: 13px; font-weight: bold; }
-.btn-filter { font-weight: bold; letter-spacing: 1px; }
-
-/* Các thành phần Trận đấu */
-.team-name { font-size: 14px; margin-top: 5px; }
-.match-time { margin-top: 10px; margin-bottom: 5px; }
-.match-stadium { margin-bottom: 15px; }
-.empty-state-box { grid-column: 1 / -1; padding: 40px; }
-.empty-state-title { color: #dc3545; }
-
-/* Menu Giải đấu */
-.league-menu-item { display: flex; align-items: center; }
-.league-menu-icon { font-size: 20px; margin-right: 10px; }
-.league-menu-logo { width: 24px; height: 24px; object-fit: contain; margin-right: 10px; }
-/* ==========================================================================
-   12. MENU GIẢI ĐẤU NẰM NGANG (HORIZONTAL LEAGUE NAV)
-   ========================================================================== */
 .league-nav-horizontal {
-    display: flex;
-    gap: 15px;
-    list-style: none;
-    padding: 10px 0;
-    margin: 0;
-    overflow-x: auto; /* Tự động có thanh cuộn ngang trên mobile */
-    scrollbar-width: none; /* Ẩn thanh cuộn trên Firefox */
+   display: flex;
+   gap: 15px;
+   list-style: none;
+   padding: 10px 0;
+   margin: 0;
+   overflow-x: auto;
+   scrollbar-width: none;
 }
+
 .league-nav-horizontal::-webkit-scrollbar {
-    display: none; /* Ẩn thanh cuộn trên Chrome/Safari */
+   display: none;
 }
+
 .league-nav-horizontal li a {
-    display: flex;
-    align-items: center;
-    padding: 10px 20px;
-    background: white;
-    border-radius: 30px; /* Bo tròn hoàn toàn */
-    color: #444;
-    font-weight: 600;
-    font-size: 14px;
-    border: 1px solid #e0e0e0;
-    transition: all 0.3s ease;
-    white-space: nowrap; /* Chống rớt dòng chữ */
-    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+   display: flex;
+   align-items: center;
+   padding: 10px 20px;
+   background: white;
+   border-radius: 30px;
+   color: #444;
+   font-weight: 600;
+   font-size: 14px;
+   border: 1px solid #e0e0e0;
+   transition: all 0.3s ease;
+   white-space: nowrap;
+   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
 }
+
 .league-nav-horizontal li a:hover {
-    background: #f8f9fa;
-    border-color: #bbb;
-    transform: translateY(-2px);
+   background: #f8f9fa;
+   border-color: #bbb;
+   transform: translateY(-2px);
 }
+
 .league-nav-horizontal li.active a {
-    background: #e8f5e9;
-    color: #28a745;
-    border-color: #28a745;
-    box-shadow: 0 4px 8px rgba(40, 167, 69, 0.15);
+   background: #e8f5e9;
+   color: var(--primary-color);
+   border-color: var(--primary-color);
+   box-shadow: 0 4px 8px rgba(40, 167, 69, 0.15);
 }
-.league-nav-horizontal .league-icon {
-    width: 24px;
-    height: 24px;
-    object-fit: contain;
-    margin-right: 8px;
-    font-size: 18px; /* Dành cho emoji */
+
+.league-icon {
+   width: 24px;
+   height: 24px;
+   object-fit: contain;
+   margin-right: 8px;
+   font-size: 18px;
+}
+
+/* ==========================================================================
+   PHẦN 5: CỘT TRÁI (BỘ LỌC) & CỘT PHẢI (WIDGET)
+   ========================================================================== */
+.sidebar-box,
+.widget-box {
+   background: white;
+   padding: 20px;
+   border-radius: 8px;
+   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+   border: 1px solid #eee;
+   margin-bottom: 20px;
+}
+
+.sidebar-heading {
+   font-size: 16px;
+   font-weight: bold;
+   color: var(--text-color);
+   margin-bottom: 20px;
+   text-transform: uppercase;
+}
+
+.sidebar-icon {
+   color: var(--primary-color);
+   margin-right: 5px;
+}
+
+.filter-label {
+   font-size: 14px;
+   font-weight: bold;
+   color: #555;
+   border-bottom: 1px solid var(--primary-color);
+   display: inline-block;
+   padding-bottom: 5px;
+   margin-bottom: 15px;
+}
+
+.date-input {
+   font-size: 13px;
+   padding: 5px;
+}
+
+.team-list-scroll {
+   max-height: 250px;
+   overflow-y: auto;
+   padding-right: 5px;
+}
+
+.team-checkbox-item {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+}
+
+.team-label {
+   font-size: 14px;
+   cursor: pointer;
+   padding-top: 2px;
+   display: flex;
+   align-items: center;
+}
+
+.team-filter-logo {
+   width: 20px;
+   height: 20px;
+   object-fit: contain;
+   margin: 0 8px;
+}
+
+.team-count {
+   color: var(--primary-color);
+   font-size: 13px;
+   font-weight: bold;
+}
+
+.btn-filter {
+   font-weight: bold;
+   letter-spacing: 1px;
+}
+
+.widget-box h3 {
+   font-size: 16px;
+   color: var(--text-color);
+   border-bottom: 2px solid #f0f0f0;
+   padding-bottom: 10px;
+   margin-bottom: 15px;
+}
+
+/* ==========================================================================
+   PHẦN 6: KHU VỰC TRẬN ĐẤU (CỘT GIỮA)
+   ========================================================================== */
+.page-title {
+   text-align: center;
+   color: var(--accent-color);
+   margin-top: 10px;
+   font-size: 26px;
+   font-weight: bold;
+}
+
+.subtitle {
+   text-align: center;
+   color: #666;
+   margin-bottom: 20px;
+}
+
+.match-grid {
+   display: grid;
+   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+   gap: 20px;
+}
+
+.match-card {
+   background: #fff;
+   border: 1px solid #e9e9e9;
+   border-radius: 10px;
+   padding: 18px;
+   text-align: center;
+   box-shadow: 0 6px 18px rgba(17, 24, 39, 0.06);
+   transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.match-card:hover {
+   transform: translateY(-6px);
+   box-shadow: 0 10px 28px rgba(17, 24, 39, 0.08);
+}
+
+.league-name {
+   color: #888;
+   font-size: 12px;
+   display: block;
+   margin-bottom: 15px;
+   border-bottom: 1px dashed #ddd;
+   padding-bottom: 5px;
+}
+
+.team-matchup {
+   display: flex;
+   justify-content: space-between;
+   align-items: flex-start;
+   margin: 15px 0;
+}
+
+.team {
+   flex: 1;
+   text-align: center;
+}
+
+.team-logo {
+   width: 60px;
+   height: 60px;
+   object-fit: contain;
+   margin-bottom: 5px;
+}
+
+.team-name {
+   font-size: 14px;
+   font-weight: bold;
+   margin-top: 5px;
+   line-height: 1.2;
+}
+
+.vs-box {
+   padding: 5px 10px;
+   background: #f0f0f0;
+   color: red;
+   border-radius: 4px;
+   font-size: 14px;
+   margin-top: 15px;
+   font-weight: bold;
+}
+
+.match-time {
+   margin-top: 10px;
+   margin-bottom: 5px;
+   color: #444;
+}
+
+.match-stadium {
+   margin-bottom: 15px;
+   color: #666;
+   font-size: 14px;
+}
+
+.empty-state-box {
+   padding: 40px;
+   background: white;
+   border-radius: 8px;
+   border: 1px dashed #dc3545;
+}
+
+.empty-state-title {
+   color: #dc3545;
+   font-weight: bold;
+}
+
+/* ==========================================================================
+   PHẦN 7: CÁC TRANG CÒN LẠI (LOGIN, REGISTER, CHECKOUT)
+   ========================================================================== */
+.auth-container {
+   max-width: 400px;
+   margin: 50px auto;
+   background: white;
+   border: 1px solid #e0e0e0;
+   padding: 30px;
+   border-radius: 8px;
+   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.auth-title {
+   text-align: center;
+   color: var(--accent-color);
+   margin-top: 0;
+   margin-bottom: 20px;
+   font-size: 24px;
+   font-weight: bold;
+}
+
+.alert-error {
+   color: #721c24;
+   background-color: #f8d7da;
+   border: 1px solid #f5c6cb;
+   padding: 10px;
+   border-radius: 4px;
+   text-align: center;
+   margin-bottom: 15px;
+   font-size: 14px;
+}
+
+.checkout-container {
+   max-width: 800px;
+   margin: 40px auto;
+   background: white;
+   padding: 30px;
+   border-radius: 8px;
+   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.match-summary {
+   background: #f8f9fa;
+   border: 1px solid #e0e0e0;
+   padding: 20px;
+   border-radius: 8px;
+   margin-bottom: 25px;
+   text-align: center;
 }
