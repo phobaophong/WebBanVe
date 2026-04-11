@@ -8,7 +8,6 @@
    --bg-color: #f4f7f6;
    --text-color: #333;
    --container-max: 95%;
-   /* Ép sát màn hình */
 }
 
 body {
@@ -138,27 +137,104 @@ ul {
 }
 
 /* ==========================================================================
-   PHẦN 3: STYLE CHO FOOTER
+   PHẦN 3: STYLE CHO FOOTER 
    ========================================================================== */
 .site-footer {
-   background: #333;
-   color: #ddd;
+   background-color: #c42127;
+   color: #ffffff;
    margin-top: 50px;
+   font-size: 14.5px;
+}
+
+.footer-top {
+   padding: 40px 0;
+}
+
+.footer-logo {
+   max-width: 140px;
+   border-radius: 50%;
+   background: #fff;
+   padding: 5px;
+   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.footer-heading {
+   font-size: 16px;
+   font-weight: bold;
+   color: #ffffff;
+   margin-bottom: 20px;
+   text-transform: uppercase;
+}
+
+.footer-nav {
+   list-style: none;
+   padding: 0;
+   margin: 0;
+}
+
+.footer-nav li {
+   margin-bottom: 10px;
+}
+
+.footer-nav a {
+   color: #ffffff;
+   text-decoration: none;
+   transition: color 0.3s;
+}
+
+.footer-nav a:hover {
+   color: #ffd700;
+}
+
+.footer-contact-text {
+   margin-bottom: 8px;
+   color: #ffffff;
+}
+
+.social-links {
+   display: flex;
+   gap: 15px;
+}
+
+.social-icon {
+   display: inline-flex;
+   align-items: center;
+   justify-content: center;
+   width: 36px;
+   height: 36px;
+   border-radius: 50%;
+   border: 1px solid #fff;
+   color: #fff;
+   text-decoration: none;
+   transition: all 0.3s;
+}
+
+.social-icon:hover {
+   background: #fff;
+   color: #c42127;
+}
+
+.bct-logo {
+   width: 140px;
+   margin-top: 10px;
 }
 
 .footer-bottom {
-   padding: 20px;
-   text-align: center;
+   background-color: #5a1012;
+   padding: 20px 0;
 }
 
 .footer-bottom p {
    margin: 0;
+   color: #ffffff;
+   font-weight: bold;
 }
 
-.footer-subtext {
+.footer-bottom .footer-subtext {
+   margin: 0;
    font-size: 13px;
-   margin-top: 5px;
-   color: #bbb;
+   color: rgba(255, 255, 255, 0.7);
+   font-weight: normal;
 }
 
 /* ==========================================================================
@@ -169,8 +245,9 @@ ul {
    overflow: hidden;
 }
 
+
 .banner-img {
-   height: 350px;
+   height: 500px;
    object-fit: cover;
 }
 

@@ -5,16 +5,27 @@ include 'includes/header.php';
 include 'includes/navbar.php';
 
 // ==========================================================================
-// 1. LẤY DANH SÁCH ĐỘI BÓNG ĐỂ ĐƯA VÀO BỘ LỌC
+// 1. LẤY DANH SÁCH ĐỘI BÓNG ĐỂ ĐƯA VÀO BỘ LỌC (Lọc theo giải đấu nếu có)
 // ==========================================================================
+$league_filter_sql = "";
+$teams_params = [];
+
+if (isset($_GET['league_id']) && !empty($_GET['league_id'])) {
+    $league_filter_sql = " AND t.id_giaidau = :league_id ";
+    $teams_params['league_id'] = $_GET['league_id'];
+}
+
 $sql_teams = "SELECT d.id, d.ten_doi, 
                    (SELECT COUNT(*) FROM tbl_trandau t 
                     WHERE t.trang_thai = 'sap_dien_ra' 
-                    AND (t.id_doi_nha = d.id OR t.id_doi_khach = d.id)) AS so_tran
+                    AND (t.id_doi_nha = d.id OR t.id_doi_khach = d.id)
+                    $league_filter_sql) AS so_tran
               FROM tbl_doibong d 
               HAVING so_tran > 0 
               ORDER BY d.ten_doi ASC";
-$stmt_teams = $conn->query($sql_teams);
+
+$stmt_teams = $conn->prepare($sql_teams);
+$stmt_teams->execute($teams_params);
 $teams_list = $stmt_teams->fetchAll(PDO::FETCH_ASSOC);
 
 // ==========================================================================
@@ -23,7 +34,6 @@ $teams_list = $stmt_teams->fetchAll(PDO::FETCH_ASSOC);
 $where_clause = "t.trang_thai = 'sap_dien_ra'";
 $params = [];
 
-// A. Lọc theo Menu Giải đấu nằm ngang
 if (isset($_GET['league_id'])) {
     $where_clause .= " AND t.id_giaidau = :league_id";
     $params['league_id'] = $_GET['league_id'];
@@ -32,7 +42,6 @@ if (isset($_GET['league_id'])) {
     $active_menu = 'upcoming';
 }
 
-// B. Lọc theo Form Ngày tháng
 if (!empty($_GET['from_date'])) {
     $where_clause .= " AND DATE(t.thoi_gian) >= :from_date";
     $params[':from_date'] = $_GET['from_date'];
@@ -42,7 +51,6 @@ if (!empty($_GET['to_date'])) {
     $params[':to_date'] = $_GET['to_date'];
 }
 
-// C. Lọc theo Form Đội bóng (Checkbox)
 $selected_teams = isset($_GET['teams']) && is_array($_GET['teams']) ? $_GET['teams'] : [];
 if (!empty($selected_teams)) {
     $team_placeholders = [];
@@ -55,7 +63,6 @@ if (!empty($selected_teams)) {
     $where_clause .= " AND (t.id_doi_nha IN ($in_clause) OR t.id_doi_khach IN ($in_clause))";
 }
 
-// Thiết lập Tiêu đề trang
 if (empty($_GET['from_date']) && empty($_GET['to_date']) && empty($selected_teams) && empty($_GET['league_id'])) {
     $where_clause .= " AND DATE(t.thoi_gian) BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 7 DAY)";
     $page_title = "CÁC TRẬN ĐẤU TRONG TUẦN TỚI";
@@ -65,26 +72,45 @@ if (empty($_GET['from_date']) && empty($_GET['to_date']) && empty($selected_team
 ?>
 
 <div class="container mt-4">
+    <?php
+    $banner_dir = "assets/images/banners/";
+    $banners = glob($banner_dir . "*.{jpg,jpeg,png,gif}", GLOB_BRACE);
+    
+    if ($banners === false) {
+        $banners = array_merge(glob($banner_dir."*.jpg"), glob($banner_dir."*.png"), glob($banner_dir."*.jpeg"));
+    }
+    
+    $total_banners = count($banners);
+
+    if ($total_banners > 0): 
+    ?>
     <div id="leagueBanner" class="carousel slide shadow-sm league-banner-container" data-ride="carousel" data-interval="5000">
+        
         <ol class="carousel-indicators">
-            <li data-target="#leagueBanner" data-slide-to="0" class="active"></li>
-            <li data-target="#leagueBanner" data-slide-to="1"></li>
-            <li data-target="#leagueBanner" data-slide-to="2"></li>
-            <li data-target="#leagueBanner" data-slide-to="3"></li>
+            <?php for ($i = 0; $i < $total_banners; $i++): ?>
+                <li data-target="#leagueBanner" data-slide-to="<?php echo $i; ?>" class="<?php echo ($i == 0) ? 'active' : ''; ?>"></li>
+            <?php endfor; ?>
         </ol>
+
         <div class="carousel-inner">
-            <div class="carousel-item active"><img src="assets/images/banners/banner1.png" class="d-block w-100 banner-img" alt="Banner 1"></div>
-            <div class="carousel-item"><img src="assets/images/banners/banner2.png" class="d-block w-100 banner-img" alt="Banner 2"></div>
-            <div class="carousel-item"><img src="assets/images/banners/banner3.png" class="d-block w-100 banner-img" alt="Banner 3"></div>
-            <div class="carousel-item"><img src="assets/images/banners/banner4.png" class="d-block w-100 banner-img" alt="Banner 4"></div>
+            <?php foreach ($banners as $index => $banner_path): ?>
+                <div class="carousel-item <?php echo ($index == 0) ? 'active' : ''; ?>">
+                    <img src="<?php echo $banner_path; ?>" class="d-block w-100 banner-img" alt="Banner <?php echo $index + 1; ?>">
+                </div>
+            <?php endforeach; ?>
         </div>
+
+        <?php if ($total_banners > 1): ?>
         <button class="carousel-control-prev carousel-control-btn" type="button" data-target="#leagueBanner" data-slide="prev">
             <span class="carousel-control-prev-icon"></span>
         </button>
         <button class="carousel-control-next carousel-control-btn" type="button" data-target="#leagueBanner" data-slide="next">
             <span class="carousel-control-next-icon"></span>
         </button>
+        <?php endif; ?>
+
     </div>
+    <?php endif; ?>
 </div>
 
 <div class="container mt-3 mb-2">
@@ -108,8 +134,10 @@ if (empty($_GET['from_date']) && empty($_GET['to_date']) && empty($selected_team
 </div>
 
 <div class="container">
-    <div class="row mt-2">
-        
+    <h1 class="page-title"><?php echo $page_title; ?></h1>
+    <p class="subtitle mb-4">Nhanh tay đặt vé để không bỏ lỡ những trận cầu đỉnh cao!</p>
+
+    <div class="row">
         <aside class="col-12 col-lg-3 mb-4 mb-lg-0">
             <div class="sidebar-box">
                 <h4 class="sidebar-heading"><span class="sidebar-icon">⧉</span> LỌC NÂNG CAO</h4>
@@ -157,9 +185,6 @@ if (empty($_GET['from_date']) && empty($_GET['to_date']) && empty($selected_team
         </aside>
 
         <main class="col-12 col-lg-6">
-            <h1 class="page-title"><?php echo $page_title; ?></h1>
-            <p class="subtitle">Nhanh tay đặt vé để không bỏ lỡ những trận cầu đỉnh cao!</p>
-
             <div class="match-grid">
                 <?php
                 $sql = "SELECT t.id, t.thoi_gian, t.san_van_dong, t.id_doi_nha, t.id_doi_khach,
@@ -179,7 +204,6 @@ if (empty($_GET['from_date']) && empty($_GET['to_date']) && empty($selected_team
                 $all_matches = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 $total_matches = count($all_matches);
                 
-                // Xác định số lượng hiển thị (Tối đa 4 trận nếu chưa bấm Xem tất cả)
                 $is_view_all = isset($_GET['view']) && $_GET['view'] == 'all';
                 $display_limit = $is_view_all ? $total_matches : 4; 
                 $show_btn = (!$is_view_all && $total_matches > 4);
@@ -223,17 +247,15 @@ if (empty($_GET['from_date']) && empty($_GET['to_date']) && empty($selected_team
             </div>
 
             <?php
-            // Hiển thị nút "Xem thêm" nếu còn trận đấu bị ẩn
             if ($show_btn) {
-                // Lấy lại các param cũ (như lọc ngày, đội bóng) và gán thêm view=all
                 $get_params = $_GET;
                 $get_params['view'] = 'all';
                 $view_all_url = 'index.php?' . http_build_query($get_params);
-                $matches_left = $total_matches - 4;
 
+                // Đã đổi text thành "Xem thêm" theo yêu cầu
                 echo "<div class='text-center mt-4 mb-4'>";
-                echo "  <a href='" . htmlspecialchars($view_all_url) . "' class='btn btn-warning' style='padding: 10px 30px; border-radius: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);'>";
-                echo "      Hiển thị thêm " . $matches_left . " trận đấu nữa ⬇️";
+                echo "  <a href='" . htmlspecialchars($view_all_url) . "' class='btn btn-warning' style='padding: 10px 40px; border-radius: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); font-weight: bold;'>";
+                echo "      Xem thêm";
                 echo "  </a>";
                 echo "</div>";
             }
