@@ -2,7 +2,7 @@
 session_start();
 require_once '../config/database.php';
 
-// Kiểm tra đăng nhập (Bảo mật 2 lớp)
+// Kiểm tra đăng nhập
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../pages/login.php");
     exit();
@@ -21,10 +21,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     try {
-        // 1. BẮT ĐẦU TRANSACTION (Bảo vệ tính toàn vẹn dữ liệu)
+        // 1. BẮT ĐẦU TRANSACTION (Đảm bảo an toàn 100% dữ liệu)
         $conn->beginTransaction();
 
-        // 2. Lấy thông tin vé hiện tại & Dùng FOR UPDATE để khóa dòng này lại chống mua trùng
+        // 2. LẤY THÔNG TIN VÀ KHÓA DÒNG VÉ (Chống mua trùng)
         $stmt_ve = $conn->prepare("
             SELECT v.so_luong_con, v.gia_tien, h.ten_hang, 
                    dn.ten_doi AS ten_nha, dk.ten_doi AS ten_khach
@@ -42,24 +42,38 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             throw new Exception("Hệ thống không tìm thấy thông tin hạng vé này!");
         }
 
-        // 3. Kiểm tra số lượng vé thực tế còn lại trong kho
         if ($ve_info['so_luong_con'] < $so_luong_mua) {
-            throw new Exception("Rất tiếc! Số vé bạn chọn đã vượt quá số lượng trong kho. Hạng vé này chỉ còn " . $ve_info['so_luong_con'] . " vé.");
+            throw new Exception("Rất tiếc! Hạng vé này chỉ còn " . $ve_info['so_luong_con'] . " vé.");
         }
 
-        // 4. Tính toán và chuẩn bị Data lưu vào tbl_donhang
         $tong_tien = $ve_info['gia_tien'] * $so_luong_mua;
+
+        // 3. KIỂM TRA SỐ DƯ TÀI KHOẢN NGƯỜI DÙNG & KHÓA DÒNG USER
+        $stmt_user = $conn->prepare("SELECT so_du FROM tbl_nguoidung WHERE id = :id_user FOR UPDATE");
+        $stmt_user->execute(['id_user' => $id_nguoidung]);
+        $user_info = $stmt_user->fetch(PDO::FETCH_ASSOC);
+
+        if ($user_info['so_du'] < $tong_tien) {
+            // Ném lỗi và tự động Rollback nếu không đủ tiền
+            throw new Exception("Tài khoản của bạn không đủ số dư! (Cần " . number_format($tong_tien, 0, ',', '.') . " VNĐ). Vui lòng nạp thêm tiền.");
+        }
+
+        // 4. TRỪ TIỀN NGƯỜI DÙNG
+        $stmt_tru_tien = $conn->prepare("UPDATE tbl_nguoidung SET so_du = so_du - :tong_tien WHERE id = :id_user");
+        $stmt_tru_tien->execute(['tong_tien' => $tong_tien, 'id_user' => $id_nguoidung]);
+
+        // 5. LƯU LỊCH SỬ VÀO BẢNG THANH TOÁN
+        $stmt_thanhtoan = $conn->prepare("INSERT INTO tbl_thanhtoan (id_nguoidung, so_tien, trang_thai) VALUES (:id_user, :so_tien, 'thanh_cong')");
+        $stmt_thanhtoan->execute(['id_user' => $id_nguoidung, 'so_tien' => $tong_tien]);
+
+        // 6. TRỪ SỐ LƯỢNG VÉ TRONG KHO
+        $stmt_update_ve = $conn->prepare("UPDATE tbl_ve SET so_luong_con = so_luong_con - :so_luong WHERE id = :id_ve");
+        $stmt_update_ve->execute(['so_luong' => $so_luong_mua, 'id_ve' => $id_ve]);
+
+        // 7. TẠO ĐƠN HÀNG
         $ten_trandau_snapshot = $ve_info['ten_nha'] . " vs " . $ve_info['ten_khach'];
         $ten_hangve_snapshot = $ve_info['ten_hang'];
 
-        // 5. TRỪ VÉ (Update tbl_ve)
-        $stmt_update_ve = $conn->prepare("UPDATE tbl_ve SET so_luong_con = so_luong_con - :so_luong WHERE id = :id_ve");
-        $stmt_update_ve->execute([
-            'so_luong' => $so_luong_mua,
-            'id_ve' => $id_ve
-        ]);
-
-        // 6. TẠO ĐƠN HÀNG (Insert tbl_donhang)
         $stmt_donhang = $conn->prepare("
             INSERT INTO tbl_donhang (id_nguoidung, id_ve, so_luong, tong_tien, ten_trandau, ten_hangve) 
             VALUES (:id_user, :id_ve, :so_luong, :tong_tien, :ten_td, :ten_hv)
@@ -73,25 +87,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             'ten_hv'    => $ten_hangve_snapshot
         ]);
 
-        // 7. HOÀN TẤT TRANSACTION
+        // 8. HOÀN TẤT GIAO DỊCH
         $conn->commit();
 
-        // Mua thành công! Báo cáo người dùng
         $_SESSION['success_msg'] = "🎉 Thanh toán thành công! Bạn đã đặt $so_luong_mua vé trận $ten_trandau_snapshot.";
-        
-        // Đưa về trang chủ (Sau này có trang lịch sử thì đổi ../index.php thành ../pages/history.php)
         header("Location: ../index.php");
         exit();
 
     } catch (Exception $e) {
-        // NẾU CÓ LỖI (Ví dụ có ai đó mua hết vé trước) -> HỦY LỆNH, TRẢ VỀ BAN ĐẦU
+        // Hủy toàn bộ lệnh (Trả lại vé, trả lại tiền) nếu có bất kỳ lỗi nào
         $conn->rollBack();
         $_SESSION['error'] = $e->getMessage();
         header("Location: ../pages/checkout.php?id_trandau=" . $id_trandau);
         exit();
     }
 } else {
-    // Truy cập không hợp lệ
     header("Location: ../index.php");
     exit();
 }
