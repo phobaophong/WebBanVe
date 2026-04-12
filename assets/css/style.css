@@ -586,3 +586,104 @@ ul {
 .auth-container-lg {
    max-width: 500px;
 }
+
+/* ==========================================================================
+   PHẦN 8: KHU VỰC QUẢN TRỊ (ADMIN DASHBOARD)
+   ========================================================================== */
+.admin-body {
+   background-color: #f8f9fc;
+}
+
+.admin-header {
+   background: #343a40;
+   color: white;
+   padding: 15px 30px;
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.admin-title {
+   margin: 0;
+   font-size: 22px;
+   font-weight: bold;
+   letter-spacing: 1px;
+}
+
+.admin-nav-links a {
+   color: #ddd;
+   margin-left: 20px;
+   font-weight: bold;
+   transition: color 0.3s;
+}
+
+.admin-nav-links a:hover {
+   color: #fff;
+   text-decoration: underline;
+}
+
+.stat-card {
+   border-radius: 8px;
+   border: none;
+   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+   color: white;
+   padding: 20px;
+   transition: transform 0.2s;
+}
+
+.stat-card:hover {
+   transform: translateY(-5px);
+}
+
+.stat-card.bg-blue { background: linear-gradient(45deg, #1E90FF, #00BFFF); }
+.stat-card.bg-green { background: linear-gradient(45deg, #28a745, #32cd32); }
+.stat-card.bg-red { background: linear-gradient(45deg, #dc3545, #ff4757); }
+
+.stat-icon {
+   font-size: 40px;
+   opacity: 0.8;
+}
+
+.admin-table-container {
+   background: white;
+   padding: 25px;
+   border-radius: 8px;
+   box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+   margin-bottom: 50px;
+}
+
+.admin-tabs {
+   border-bottom: 2px solid #eee;
+   margin-bottom: 20px;
+}
+
+.admin-tabs .nav-link {
+   font-weight: bold;
+   color: #666;
+   border: none;
+   padding: 10px 20px;
+   font-size: 16px;
+}
+
+.admin-tabs .nav-link.active {
+   color: var(--primary-color);
+   background: transparent;
+   border-bottom: 3px solid var(--primary-color);
+}
+
+.table-admin th {
+   background-color: #f8f9fa;
+   color: #333;
+   border-top: none;
+}
+
+.table-admin td {
+   vertical-align: middle;
+}
+
+.action-icon {
+   font-size: 18px;
+   margin: 0 5px;
+   cursor: pointer;
+}
