@@ -14,7 +14,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     try {
         // Tìm user trong CSDL (Dùng PDO Prepare để chống SQL Injection tuyệt đối)
-        $stmt = $conn->prepare("SELECT id, ten_dang_nhap, mat_khau, vai_tro FROM tbl_nguoidung WHERE ten_dang_nhap = :username");
+        $stmt = $conn->prepare("SELECT * FROM tbl_nguoidung WHERE ten_dang_nhap = :username");
         $stmt->execute(['username' => $username]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -23,6 +23,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Đăng nhập thành công -> Lưu thông tin vào Session
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['username'] = $user['ten_dang_nhap'];
+            $_SESSION['ho_ten'] = $user['ho_ten']; 
+            $_SESSION['so_du'] = $user['so_du'];
             $_SESSION['role'] = $user['vai_tro'];
             
             // Chuyển hướng

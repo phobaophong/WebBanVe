@@ -64,7 +64,7 @@ include '../includes/navbar.php';
 
         <div class="match-summary">
             <h5 class="text-uppercase text-primary font-weight-bold"><?php echo htmlspecialchars($match['ten_giai']); ?></h5>
-            <h3 class="mt-2 mb-3 font-weight-bold" style="color: var(--primary-color);">
+            <h3 class="mt-2 mb-3 font-weight-bold checkout-match-title">
                 <?php echo htmlspecialchars($match['ten_nha']); ?> <span class="text-dark">VS</span> <?php echo htmlspecialchars($match['ten_khach']); ?>
             </h3>
             <p class="mb-1"><b>⏰ Thời gian:</b> <?php echo date('H:i - d/m/Y', strtotime($match['thoi_gian'])); ?></p>
@@ -126,7 +126,6 @@ document.addEventListener('DOMContentLoaded', function() {
         let qty = parseInt(ticketQty.value) || 0;
 
         if (price > 0 && qty > 0) {
-            // Ràng buộc không cho mua lố số lượng vé còn lại
             if (qty > maxQty) {
                 alert("Số lượng vé bạn chọn vượt quá số vé còn lại trong kho (" + maxQty + " vé).");
                 ticketQty.value = maxQty;
@@ -134,7 +133,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             const total = price * qty;
-            // Hiển thị định dạng tiền tệ VNĐ
             totalPriceDisplay.textContent = new Intl.NumberFormat('vi-VN').format(total) + " VNĐ";
             btnSubmit.disabled = false;
         } else {

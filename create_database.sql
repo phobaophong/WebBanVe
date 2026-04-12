@@ -117,3 +117,11 @@ CREATE TABLE tbl_donhang (
     FOREIGN KEY (id_nguoidung) REFERENCES tbl_nguoidung(id),
     FOREIGN KEY (id_ve) REFERENCES tbl_ve(id)
 ) ENGINE=InnoDB;
+
+CREATE TABLE tbl_chitiet_donhang (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_donhang INT NOT NULL,
+    ma_donhang_qr VARCHAR(50) UNIQUE NOT NULL,
+    trang_thai_donhang ENUM('chua_su_dung', 'da_su_dung') DEFAULT 'chua_su_dung',
+    FOREIGN KEY (id_donhang) REFERENCES tbl_donhang(id) ON DELETE CASCADE
+) ENGINE=InnoDB;

@@ -82,6 +82,7 @@ $users = $conn->query($sql_users)->fetchAll(PDO::FETCH_ASSOC);
         <h1 class="admin-title">🛠️ BẢNG ĐIỀU KHIỂN ADMIN</h1>
         <div class="admin-nav-links">
             <span class="text-warning font-weight-bold mr-3">Xin chào, <?php echo htmlspecialchars($_SESSION['username']); ?>!</span>
+            <a href="scan_ticket.php" class="text-warning font-weight-bold mr-3" style="font-size: 18px;">📷 Soát Vé QR</a>
             <a href="<?php echo $base_url; ?>/index.php">🌐 Trở về Website</a>
             <a href="<?php echo $base_url; ?>/actions/process_logout.php" class="text-danger">Đăng xuất</a>
         </div>
