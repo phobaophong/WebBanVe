@@ -1,90 +1,126 @@
+-- 1. Tắt kiểm tra khóa ngoại
+SET FOREIGN_KEY_CHECKS = 0;
+
+-- 2. Dùng DELETE để xóa sạch dữ liệu (lệnh này không bị chặn)
+DELETE FROM tbl_donhang;
+DELETE FROM tbl_thanhtoan;
+DELETE FROM tbl_ve;
+DELETE FROM tbl_trandau;
+DELETE FROM tbl_doibong;
+DELETE FROM tbl_giaidau;
+DELETE FROM tbl_hangve;
+DELETE FROM tbl_nguoidung;
+
+-- 3. Ép hệ thống đếm lại ID (AUTO_INCREMENT) từ số 1
+ALTER TABLE tbl_donhang AUTO_INCREMENT = 1;
+ALTER TABLE tbl_thanhtoan AUTO_INCREMENT = 1;
+ALTER TABLE tbl_ve AUTO_INCREMENT = 1;
+ALTER TABLE tbl_trandau AUTO_INCREMENT = 1;
+ALTER TABLE tbl_doibong AUTO_INCREMENT = 1;
+ALTER TABLE tbl_giaidau AUTO_INCREMENT = 1;
+ALTER TABLE tbl_hangve AUTO_INCREMENT = 1;
+ALTER TABLE tbl_nguoidung AUTO_INCREMENT = 1;
+
+-- 4. Bật lại khóa ngoại để bảo vệ Database
+SET FOREIGN_KEY_CHECKS = 1;
+
 INSERT INTO tbl_giaidau (ten_giai) VALUES ('Ngoại hạng Anh (EPL)'); -- Có ID = 1
 INSERT INTO tbl_giaidau (ten_giai) VALUES ('Serie A (Ý)');        -- ID = 2
 INSERT INTO tbl_giaidau (ten_giai) VALUES ('Bundesliga (Đức)');   -- ID = 3
 INSERT INTO tbl_giaidau (ten_giai) VALUES ('La Liga (Tây Ban Nha)'); -- ID = 4
-INSERT INTO tbl_doibong (ten_doi, quoc_gia) VALUES 
--- Ngoai hạng Anh (20 đội)
-('Arsenal', 'Anh'),                   -- ID 1
-('Aston Villa', 'Anh'),               -- ID 2
-('Bournemouth', 'Anh'),               -- ID 3
-('Brentford', 'Anh'),                 -- ID 4
-('Brighton', 'Anh'),                  -- ID 5
-('Burnley', 'Anh'),                   -- ID 6
-('Chelsea', 'Anh'),                   -- ID 7
-('Crystal Palace', 'Anh'),            -- ID 8
-('Everton', 'Anh'),                   -- ID 9
-('Fulham', 'Anh'),                    -- ID 10
-('Leeds United', 'Anh'),              -- ID 11
-('Liverpool', 'Anh'),                 -- ID 12
-('Manchester City', 'Anh'),           -- ID 13
-('Manchester United', 'Anh'),         -- ID 14
-('Newcastle', 'Anh'),                 -- ID 15
-('Nottingham Forest', 'Anh'),         -- ID 16
-('Sunderland', 'Anh'),                -- ID 17
-('Tottenham', 'Anh'),                 -- ID 18
-('West Ham', 'Anh'),                  -- ID 19
-('Wolverhampton Wanderers', 'Anh'),   -- ID 20
--- Serie A (20 đội)
-('AC Milan', 'Ý'),                  -- ID 21
-('AS Roma', 'Ý'),                   -- ID 22
-('Atalanta', 'Ý'),                  -- ID 23
-('Bologna', 'Ý'),                   -- ID 24
-('Cagliari', 'Ý'),                  -- ID 25
-('Como', 'Ý'),                      -- ID 26
-('Cremonese', 'Ý'),                 -- ID 27
-('Fiorentina', 'Ý'),                -- ID 28
-('Genoa', 'Ý'),                     -- ID 29
-('Hellas Verona', 'Ý'),             -- ID 30
-('Inter Milan', 'Ý'),               -- ID 31
-('Juventus', 'Ý'),                  -- ID 32
-('Lazio', 'Ý'),                    -- ID 33
-('Lecce', 'Ý'),                    -- ID 34
-('Napoli', 'Ý'),                   -- ID 35
-('Parma', 'Ý'),                    -- ID 36
-('Pisa', 'Ý'),                     -- ID 37
-('Sassuolo', 'Ý'),                 -- ID 38
-('Torino', 'Ý'),                   -- ID 39
-('Udinese', 'Ý'),                  -- ID 40
--- Bundesliga (18 đội)
-('FC Koln', 'Đức'),                 -- ID 41
-('Bayer Leverkusen', 'Đức'),        -- ID 42
-('Bayern Munich', 'Đức'),           -- ID 43
-('Borussia Dortmund', 'Đức'),      -- ID 44
-('Borussia Monchengladbach', 'Đức'), -- ID 45
-('Eintracht Frankfurt', 'Đức'),    -- ID 46
-('FC Augsburg', 'Đức'),            -- ID 47
-('FC Heidenheim', 'Đức'),          -- ID 48
-('St. Pauli', 'Đức'),              -- ID 49
-('Hamburger SV', 'Đức'),           -- ID 50
-('Mainz 05', 'Đức'),               -- ID 51
-('RB Leipzig', 'Đức'),             -- ID 52
-('SC Freiburg', 'Đức'),            -- ID 53
-('TSG Hoffenheim', 'Đức'),         -- ID 54
-('Union Berlin', 'Đức'),           -- ID 55
-('VfB Stuttgart', 'Đức'),          -- ID 56
-('VfL Wolfsburg', 'Đức'),          -- ID 57
-('Werder Bremen', 'Đức'),          -- ID 58
 
-('Alavés', 'Tây Ban Nha'),          -- ID 59
-('Athletic Bilbao', 'Tây Ban Nha'), -- ID 60
-('Atlético Madrid', 'Tây Ban Nha'), -- ID 61
-('Barcelona', 'Tây Ban Nha'),       -- ID 62
-('Celta Vigo', 'Tây Ban Nha'),      -- ID 63
-('Elche', 'Tây Ban Nha'),           -- ID 64 (Mới)
-('Espanyol', 'Tây Ban Nha'),        -- ID 65
-('Getafe', 'Tây Ban Nha'),          -- ID 66
-('Girona', 'Tây Ban Nha'),          -- ID 67
-('Levante', 'Tây Ban Nha'),         -- ID 68 (Mới)
-('Mallorca', 'Tây Ban Nha'),        -- ID 69
-('Osasuna', 'Tây Ban Nha'),         -- ID 70
-('Rayo Vallecano', 'Tây Ban Nha'),  -- ID 71
-('Real Betis', 'Tây Ban Nha'),      -- ID 72
-('Real Madrid', 'Tây Ban Nha'),     -- ID 73
-('Real Oviedo', 'Tây Ban Nha'),     -- ID 74 (Mới)
-('Real Sociedad', 'Tây Ban Nha'),   -- ID 75
-('Sevilla', 'Tây Ban Nha'),         -- ID 76
-('Valencia', 'Tây Ban Nha'),        -- ID 77
-('Villarreal', 'Tây Ban Nha');      -- ID 78
+-- CHÈN HẠNG VÉ
+INSERT INTO tbl_hangve (id, ten_hang) VALUES 
+(1, 'Khán đài A'), 
+(2, 'Khán đài B'), 
+(3, 'Khán đài C'), 
+(4, 'VIP (Phòng kính)');
+INSERT INTO tbl_doibong (id_giaidau, ten_doi, quoc_gia) VALUES 
+-- Ngoại hạng Anh (ID Giải: 1)
+(1, 'Arsenal', 'Anh'),                   -- ID 1
+(1, 'Aston Villa', 'Anh'),               -- ID 2
+(1, 'Bournemouth', 'Anh'),               -- ID 3
+(1, 'Brentford', 'Anh'),                 -- ID 4
+(1, 'Brighton', 'Anh'),                  -- ID 5
+(1, 'Burnley', 'Anh'),                   -- ID 6
+(1, 'Chelsea', 'Anh'),                   -- ID 7
+(1, 'Crystal Palace', 'Anh'),            -- ID 8
+(1, 'Everton', 'Anh'),                   -- ID 9
+(1, 'Fulham', 'Anh'),                    -- ID 10
+(1, 'Leeds United', 'Anh'),              -- ID 11
+(1, 'Liverpool', 'Anh'),                 -- ID 12
+(1, 'Manchester City', 'Anh'),           -- ID 13
+(1, 'Manchester United', 'Anh'),         -- ID 14
+(1, 'Newcastle', 'Anh'),                 -- ID 15
+(1, 'Nottingham Forest', 'Anh'),         -- ID 16
+(1, 'Sunderland', 'Anh'),                -- ID 17
+(1, 'Tottenham', 'Anh'),                 -- ID 18
+(1, 'West Ham', 'Anh'),                  -- ID 19
+(1, 'Wolverhampton Wanderers', 'Anh'),   -- ID 20
+
+-- Serie A (ID Giải: 2)
+(2, 'AC Milan', 'Ý'),                  -- ID 21
+(2, 'AS Roma', 'Ý'),                   -- ID 22
+(2, 'Atalanta', 'Ý'),                  -- ID 23
+(2, 'Bologna', 'Ý'),                   -- ID 24
+(2, 'Cagliari', 'Ý'),                  -- ID 25
+(2, 'Como', 'Ý'),                      -- ID 26
+(2, 'Cremonese', 'Ý'),                 -- ID 27
+(2, 'Fiorentina', 'Ý'),                -- ID 28
+(2, 'Genoa', 'Ý'),                     -- ID 29
+(2, 'Hellas Verona', 'Ý'),             -- ID 30
+(2, 'Inter Milan', 'Ý'),               -- ID 31
+(2, 'Juventus', 'Ý'),                  -- ID 32
+(2, 'Lazio', 'Ý'),                     -- ID 33
+(2, 'Lecce', 'Ý'),                     -- ID 34
+(2, 'Napoli', 'Ý'),                    -- ID 35
+(2, 'Parma', 'Ý'),                     -- ID 36
+(2, 'Pisa', 'Ý'),                      -- ID 37
+(2, 'Sassuolo', 'Ý'),                  -- ID 38
+(2, 'Torino', 'Ý'),                    -- ID 39
+(2, 'Udinese', 'Ý'),                   -- ID 40
+
+-- Bundesliga (ID Giải: 3)
+(3, 'FC Koln', 'Đức'),                 -- ID 41
+(3, 'Bayer Leverkusen', 'Đức'),        -- ID 42
+(3, 'Bayern Munich', 'Đức'),           -- ID 43
+(3, 'Borussia Dortmund', 'Đức'),       -- ID 44
+(3, 'Borussia Monchengladbach', 'Đức'),-- ID 45
+(3, 'Eintracht Frankfurt', 'Đức'),     -- ID 46
+(3, 'FC Augsburg', 'Đức'),             -- ID 47
+(3, 'FC Heidenheim', 'Đức'),           -- ID 48
+(3, 'St. Pauli', 'Đức'),               -- ID 49
+(3, 'Hamburger SV', 'Đức'),            -- ID 50
+(3, 'Mainz 05', 'Đức'),                -- ID 51
+(3, 'RB Leipzig', 'Đức'),              -- ID 52
+(3, 'SC Freiburg', 'Đức'),             -- ID 53
+(3, 'TSG Hoffenheim', 'Đức'),          -- ID 54
+(3, 'Union Berlin', 'Đức'),            -- ID 55
+(3, 'VfB Stuttgart', 'Đức'),           -- ID 56
+(3, 'VfL Wolfsburg', 'Đức'),           -- ID 57
+(3, 'Werder Bremen', 'Đức'),           -- ID 58
+
+-- La Liga (ID Giải: 4)
+(4, 'Alavés', 'Tây Ban Nha'),          -- ID 59
+(4, 'Athletic Bilbao', 'Tây Ban Nha'), -- ID 60
+(4, 'Atlético Madrid', 'Tây Ban Nha'), -- ID 61
+(4, 'Barcelona', 'Tây Ban Nha'),       -- ID 62
+(4, 'Celta Vigo', 'Tây Ban Nha'),      -- ID 63
+(4, 'Elche', 'Tây Ban Nha'),           -- ID 64 
+(4, 'Espanyol', 'Tây Ban Nha'),        -- ID 65
+(4, 'Getafe', 'Tây Ban Nha'),          -- ID 66
+(4, 'Girona', 'Tây Ban Nha'),          -- ID 67
+(4, 'Levante', 'Tây Ban Nha'),         -- ID 68 
+(4, 'Mallorca', 'Tây Ban Nha'),        -- ID 69
+(4, 'Osasuna', 'Tây Ban Nha'),         -- ID 70
+(4, 'Rayo Vallecano', 'Tây Ban Nha'),  -- ID 71
+(4, 'Real Betis', 'Tây Ban Nha'),      -- ID 72
+(4, 'Real Madrid', 'Tây Ban Nha'),     -- ID 73
+(4, 'Real Oviedo', 'Tây Ban Nha'),     -- ID 74 
+(4, 'Real Sociedad', 'Tây Ban Nha'),   -- ID 75
+(4, 'Sevilla', 'Tây Ban Nha'),         -- ID 76
+(4, 'Valencia', 'Tây Ban Nha'),        -- ID 77
+(4, 'Villarreal', 'Tây Ban Nha');      -- ID 78
 -- chen 50 tran dau ngoai hang anh
 INSERT INTO tbl_trandau (id_giaidau, id_doi_nha, id_doi_khach, thoi_gian, san_van_dong, trang_thai) VALUES
 -- VÒNG 32

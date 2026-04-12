@@ -5,22 +5,25 @@ include 'includes/header.php';
 include 'includes/navbar.php';
 
 // ==========================================================================
-// 1. LẤY DANH SÁCH ĐỘI BÓNG ĐỂ ĐƯA VÀO BỘ LỌC (Lọc theo giải đấu nếu có)
+// 1. LẤY DANH SÁCH ĐỘI BÓNG ĐỂ ĐƯA VÀO BỘ LỌC (Tối ưu hóa với id_giaidau)
 // ==========================================================================
 $league_filter_sql = "";
 $teams_params = [];
 
+// Nếu người dùng bấm vào 1 Giải đấu trên thanh menu ngang
 if (isset($_GET['league_id']) && !empty($_GET['league_id'])) {
-    $league_filter_sql = " AND t.id_giaidau = :league_id ";
+    // LỌC TRỰC TIẾP TRÊN BẢNG ĐỘI BÓNG (Cực nhanh và chuẩn xác)
+    $league_filter_sql = " WHERE d.id_giaidau = :league_id ";
     $teams_params['league_id'] = $_GET['league_id'];
 }
 
+// Lấy danh sách đội bóng kèm theo đếm số trận sắp diễn ra
 $sql_teams = "SELECT d.id, d.ten_doi, 
                    (SELECT COUNT(*) FROM tbl_trandau t 
                     WHERE t.trang_thai = 'sap_dien_ra' 
-                    AND (t.id_doi_nha = d.id OR t.id_doi_khach = d.id)
-                    $league_filter_sql) AS so_tran
+                    AND (t.id_doi_nha = d.id OR t.id_doi_khach = d.id)) AS so_tran
               FROM tbl_doibong d 
+              $league_filter_sql
               HAVING so_tran > 0 
               ORDER BY d.ten_doi ASC";
 
