@@ -583,3 +583,6 @@ ul {
    text-align: center;
    margin-bottom: 20px;
 }
+.auth-container-lg {
+   max-width: 500px;
+}

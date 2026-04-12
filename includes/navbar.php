@@ -11,10 +11,12 @@
             
             <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
                 <li><a href="<?php echo $base_url; ?>/admin/index.php" class="btn-admin-nav">Khu Vực Quản Trị</a></li>
+            <?php else: ?>
+                <li><a href="<?php echo $base_url; ?>/pages/history.php">Lịch sử mua vé</a></li>
             <?php endif; ?>
             
-            <li><a href="<?php echo $base_url; ?>/pages/history.php">Lịch sử mua vé</a></li>
             <li><a href="<?php echo $base_url; ?>/actions/process_logout.php" class="logout-link">[ Đăng xuất ]</a></li>
+        
         <?php else: ?>
             <li><a href="<?php echo $base_url; ?>/pages/login.php">Đăng Nhập</a></li>
             <li><a href="<?php echo $base_url; ?>/pages/register.php" class="nav-btn-register">Đăng Ký</a></li>
