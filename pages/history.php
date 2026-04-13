@@ -27,7 +27,7 @@ include '../includes/navbar.php';
 
 <div class="container">
     <div class="user-page-container history-wrapper">
-        <h2 class="text-center text-primary font-weight-bold mb-4">📜 VÉ ĐÃ MUA CỦA BẠN</h2>
+        <h2 class="text-center text-primary font-weight-bold mb-4"> VÉ ĐÃ MUA CỦA BẠN</h2>
 
         <?php if (isset($_SESSION['success_msg'])): ?>
             <div class='alert alert-success alert-custom-success'><?php echo $_SESSION['success_msg']; unset($_SESSION['success_msg']); ?></div>
@@ -82,7 +82,7 @@ include '../includes/navbar.php';
         <?php endif; ?>
         
         <div class="text-center mt-4">
-            <a href="../index.php" class="btn-back-home">🔙 Quay lại Trang chủ</a>
+            <a href="../index.php" class="btn-back-home"> Quay lại Trang chủ</a>
         </div>
     </div>
 </div>

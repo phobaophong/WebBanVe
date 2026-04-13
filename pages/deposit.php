@@ -12,7 +12,7 @@ include '../includes/navbar.php';
 
 <div class="container">
     <div class="user-page-container deposit-wrapper">
-        <h2 class="text-center font-weight-bold mb-4 deposit-title">💳 NẠP TIỀN TÀI KHOẢN</h2>
+        <h2 class="text-center font-weight-bold mb-4 deposit-title"> NẠP TIỀN TÀI KHOẢN</h2>
         
         <div class="alert alert-info text-center mb-4">
             Số dư hiện tại của bạn: <strong><?php echo number_format($_SESSION['so_du'], 0, ',', '.'); ?> VNĐ</strong>
@@ -47,7 +47,7 @@ include '../includes/navbar.php';
             <button type="submit" class="btn btn-success btn-block btn-lg font-weight-bold mt-4 btn-rounded">XÁC NHẬN NẠP TIỀN</button>
         </form>
         <div class="text-center">
-            <a href="../index.php" class="btn-back-home">🔙 Quay lại Trang chủ</a>
+            <a href="../index.php" class="btn-back-home"> Quay lại Trang chủ</a>
         </div>
     </div>
 </div>

@@ -52,7 +52,7 @@
     </div>
 
     <div class="warning-ticker">
-        <span>⚠️ CẢNH BÁO: Tránh xa các hành vi cá độ bóng đá dưới mọi hình thức. Cá độ bóng đá là hành vi vi phạm pháp luật và bị Nhà nước Việt Nam nghiêm cấm! ⚠️</span>
+        <span> CẢNH BÁO: Tránh xa các hành vi cá độ bóng đá dưới mọi hình thức. Cá độ bóng đá là hành vi vi phạm pháp luật và bị Nhà nước Việt Nam nghiêm cấm! </span>
     </div>
 
 </nav>

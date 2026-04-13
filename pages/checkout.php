@@ -53,7 +53,9 @@ include '../includes/navbar.php';
 
 <div class="container">
     <div class="checkout-container">
-        <h2 class="auth-title mb-4">🎟️ XÁC NHẬN ĐẶT VÉ</h2>
+        <h2 class="auth-title mb-4">
+            <img src="../assets/images/system/icon-ticket.png" class="sys-icon" alt="icon"> XÁC NHẬN ĐẶT VÉ
+        </h2>
         
         <?php 
         if (isset($_SESSION['error'])) {
@@ -67,8 +69,8 @@ include '../includes/navbar.php';
             <h3 class="mt-2 mb-3 font-weight-bold checkout-match-title">
                 <?php echo htmlspecialchars($match['ten_nha']); ?> <span class="text-dark">VS</span> <?php echo htmlspecialchars($match['ten_khach']); ?>
             </h3>
-            <p class="mb-1"><b>⏰ Thời gian:</b> <?php echo date('H:i - d/m/Y', strtotime($match['thoi_gian'])); ?></p>
-            <p class="mb-0"><b>🏟️ Sân vận động:</b> <?php echo htmlspecialchars($match['san_van_dong']); ?></p>
+            <p class="mb-1"><b><img src="../assets/images/system/icon-time.png" class="sys-icon" alt="icon"> Thời gian:</b> <?php echo date('H:i - d/m/Y', strtotime($match['thoi_gian'])); ?></p>
+            <p class="mb-0"><b><img src="../assets/images/system/icon-stadium.png" class="sys-icon" alt="icon"> Sân vận động:</b> <?php echo htmlspecialchars($match['san_van_dong']); ?></p>
         </div>
 
         <?php if (count($tickets) > 0): ?>
@@ -100,7 +102,9 @@ include '../includes/navbar.php';
                     <h3 class="mb-0 text-success font-weight-bold" id="totalPrice">0 VNĐ</h3>
                 </div>
 
-                <button type="submit" class="btn btn-success btn-block btn-auth" id="btnSubmit" disabled>THANH TOÁN NGAY</button>
+                <button type="submit" class="btn btn-success btn-block btn-auth" id="btnSubmit" disabled>
+                    <img src="../assets/images/system/icon-ticket.png" class="sys-icon-btn" alt="icon"> THANH TOÁN NGAY
+                </button>
                 <a href="../index.php" class="btn btn-outline-secondary btn-block btn-auth">Quay lại Trang chủ</a>
             </form>
         <?php else: ?>

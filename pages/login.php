@@ -14,7 +14,7 @@ $redirect = isset($_GET['redirect']) ? $_GET['redirect'] : '';
 
 <div class="container">
     <div class="auth-container">
-        <h2 class="auth-title">🔒 ĐĂNG NHẬP</h2>
+        <h2 class="auth-title"> ĐĂNG NHẬP</h2>
         
         <?php 
         if (isset($_SESSION['error'])) {

@@ -1,6 +1,4 @@
-/* ==========================================================================
-   PHẦN 1: THIẾT LẬP CHUNG (GLOBAL)
-   ========================================================================== */
+/* global */
 :root {
    --primary-color: #28a745;
    --primary-dark: #218838;
@@ -8,6 +6,21 @@
    --bg-color: #f4f7f6;
    --text-color: #333;
    --container-max: 95%;
+}
+.sys-icon {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+    vertical-align: text-bottom; 
+    margin-right: 5px; 
+}
+
+.sys-icon-btn {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    vertical-align: middle;
+    margin-right: 8px;
 }
 
 body {
@@ -42,16 +55,14 @@ ul {
    margin: 0;
 }
 
-/* ==========================================================================
-   PHẦN 2: STYLE CHO NAVBAR
-   ========================================================================== */
+/* navbar */
 .header {
    position: sticky;
    top: 0;
    z-index: 1000;
 }
 
-/* NAVBAR */
+
 .custom-navbar {
    background: #1e293b;
    padding: 12px 30px;
@@ -61,7 +72,7 @@ ul {
    color: white;
 }
 
-/* LEFT */
+
 .logo {
    color: white;
    font-size: 22px;
@@ -69,7 +80,7 @@ ul {
    text-decoration: none;
 }
 
-/* CENTER */
+
 .nav-center {
    display: flex;
    gap: 25px;
@@ -87,14 +98,14 @@ ul {
    color: #3b82f6;
 }
 
-/* RIGHT */
+
 .nav-right {
    display: flex;
    align-items: center;
    gap: 15px;
 }
 
-/* USER */
+
 .user-box {
    position: relative;
    cursor: pointer;
@@ -105,7 +116,7 @@ ul {
    font-weight: bold;
 }
 
-/* DROPDOWN */
+
 .dropdown-menu-custom {
    position: absolute;
    top: 120%;
@@ -141,7 +152,7 @@ ul {
    color: red;
 }
 
-/* BUTTON */
+
 .btn-register {
    background: #3b82f6;
    color: white !important;
@@ -153,10 +164,6 @@ ul {
 .btn-register:hover {
    background: #2563eb;
 }
-
-/* WARNING BAR */
-
-
 
 .warning-ticker {
    background: #dc3545;
@@ -186,9 +193,7 @@ ul {
    }
 }
 
-/* ==========================================================================
-   PHẦN 3: STYLE CHO FOOTER 
-   ========================================================================== */
+/* footer */
 .site-footer {
    background-color: #c42127;
    color: #ffffff;
@@ -287,9 +292,7 @@ ul {
    font-weight: normal;
 }
 
-/* ==========================================================================
-   PHẦN 4: BANNER QUẢNG CÁO & MENU GIẢI ĐẤU NGANG
-   ========================================================================== */
+/* banner */
 .alert-homepage {
    border-radius: 8px;
 }
@@ -374,9 +377,7 @@ ul {
    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* ==========================================================================
-   PHẦN 5: CỘT TRÁI (BỘ LỌC) & CỘT PHẢI (WIDGET)
-   ========================================================================== */
+/* left right */
 .sidebar-box, .widget-box {
    background: white;
    padding: 20px;
@@ -516,7 +517,6 @@ ul {
    text-decoration: none;
 }
 
-/* Định dạng độ rộng các cột cho bảng xếp hạng */
 .col-rank {
    width: 10%;
 }
@@ -533,9 +533,7 @@ ul {
    width: 25%;
 }
 
-/* ==========================================================================
-   PHẦN 6: KHU VỰC TRẬN ĐẤU (CỘT GIỮA)
-   ========================================================================== */
+/* center */
 .page-title {
    text-align: center;
    color: var(--accent-color);
@@ -557,7 +555,7 @@ ul {
 }
 
 .match-card {
-   background: #fff;
+   background: #ffffff;
    border: 1px solid #e9e9e9;
    border-radius: 10px;
    padding: 18px;
@@ -655,9 +653,7 @@ ul {
    font-weight: bold;
 }
 
-/* ==========================================================================
-   PHẦN 7: CÁC TRANG CÒN LẠI (LOGIN, REGISTER, CHECKOUT)
-   ========================================================================== */
+/* login, register, checkout, scan ticket */
 .auth-container {
    max-width: 400px;
    margin: 50px auto;
@@ -761,10 +757,7 @@ ul {
    font-size: 10px;
    width: 100%;
 }
-
-/* ==========================================================================
-   PHẦN 8: KHU VỰC QUẢN TRỊ (ADMIN DASHBOARD)
-   ========================================================================== */
+/* admin */
 .admin-body {
    background-color: #f8f9fc;
 }
@@ -871,9 +864,7 @@ ul {
    cursor: pointer;
 }
 
-/* ==========================================================================
-   PHẦN 9: TRANG NGƯỜI DÙNG (LỊCH SỬ & NẠP TIỀN)
-   ========================================================================== */
+/* histoty, deposit */
 .user-page-container {
    background: white;
    padding: 35px;
@@ -890,7 +881,6 @@ ul {
    max-width: 500px;
 }
 
-/* Các nút nạp tiền nhanh */
 .preset-amounts {
    display: flex;
    gap: 10px;
@@ -968,9 +958,6 @@ ul {
    /* Hiệu ứng nhích nhẹ sang trái khi rê chuột */
 }
 
-/* ==========================================================================
-   PHẦN 10: TRẠM SOÁT VÉ (ADMIN SCAN TICKET)
-   ========================================================================== */
 .scan-container {
    max-width: 650px;
    margin: 50px auto;
