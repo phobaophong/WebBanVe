@@ -13,7 +13,7 @@ $thong_bao = "";
 $loai_thong_bao = "";
 $chi_tiet_ve = null;
 
-// XỬ LÝ KHI CÓ MÃ VÉ ĐƯỢC GỬI LÊN (Do máy quét QR tự động submit)
+// XỬ LÝ KHI CÓ MÃ VÉ ĐƯỢC GỬI LÊN
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['ma_ve'])) {
     $ma_ve = trim($_POST['ma_ve']);
 
@@ -38,6 +38,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['ma_ve'])) {
                 $thong_bao = "⚠️ CẢNH BÁO: Vé này ĐÃ ĐƯỢC QUÉT TRƯỚC ĐÓ. Có dấu hiệu gian lận!";
                 $loai_thong_bao = "warning";
             } else {
+                // CẬP NHẬT TRẠNG THÁI VÉ TỰ ĐỘNG
                 $stmt_update = $conn->prepare("UPDATE tbl_chitiet_donhang SET trang_thai_donhang = 'da_su_dung' WHERE ma_donhang_qr = ?");
                 $stmt_update->execute([$ma_ve]);
                 
@@ -58,6 +59,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['ma_ve'])) {
     <title>Hệ thống Soát Vé - Admin</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="<?php echo $base_url; ?>/assets/css/style.css?v=<?php echo time(); ?>">
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 </head>
 <body class="admin-body">
 
@@ -70,15 +72,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['ma_ve'])) {
 
     <div class="container scan-container">
         <div class="admin-table-container text-center">
-            <h3 class="mb-4 text-primary font-weight-bold">HƯỚNG MÁY QUÉT VÀO ĐÂY</h3>
             
-            <form action="scan_ticket.php" method="POST">
+            <div id="reader" style="width: 100%; max-width: 500px; margin: 0 auto 20px auto; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1);"></div>
+
+            <h5 class="mb-3 text-secondary font-weight-bold">HOẶC NHẬP MÃ THỦ CÔNG</h5>
+            
+            <form action="scan_ticket.php" method="POST" id="scanForm">
                 <div class="form-group">
-                    <input type="text" name="ma_ve" class="form-control form-control-lg text-center scan-input font-weight-bold" 
-                           placeholder="Quét mã QR..." autofocus required autocomplete="off">
+                    <input type="text" name="ma_ve" id="ma_ve_input" class="form-control form-control-lg text-center scan-input font-weight-bold" 
+                           placeholder="Mã sẽ tự hiện khi quét thành công..." autofocus required autocomplete="off">
                 </div>
                 <button type="submit" class="btn btn-success btn-lg btn-block mt-3 btn-rounded">
-                    🔍 KIỂM TRA MÃ THỦ CÔNG
+                    🔍 KIỂM TRA MÃ
                 </button>
             </form>
 
@@ -99,9 +104,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['ma_ve'])) {
                     
                     <div class="text-center mt-4">
                         <?php if ($chi_tiet_ve['trang_thai_donhang'] === 'da_su_dung'): ?>
-                            <span class="badge badge-secondary badge-scan">Trạng thái: Đã thu hồi</span>
+                            <span class="badge badge-secondary badge-scan" style="padding: 10px 20px; font-size: 14px;">Trạng thái: Đã thu hồi</span>
                         <?php else: ?>
-                            <span class="badge badge-warning badge-scan">Trạng thái: Chưa sử dụng</span>
+                            <span class="badge badge-warning badge-scan" style="padding: 10px 20px; font-size: 14px;">Trạng thái: Chưa sử dụng</span>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -109,5 +114,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['ma_ve'])) {
         </div>
     </div>
 
+    <script>
+        // Hàm chạy khi quét QR thành công
+        function onScanSuccess(decodedText, decodedResult) {
+            // 1. Dừng quét ngay lập tức để tránh quét 1 vé nhiều lần liên tục
+            html5QrcodeScanner.clear();
+            
+            // 2. Điền mã QR vừa quét được vào ô input
+            document.getElementById('ma_ve_input').value = decodedText;
+            
+            // 3. Tự động submit form y như người dùng bấm nút
+            document.getElementById('scanForm').submit();
+        }
+
+        // Cấu hình máy quét
+        let html5QrcodeScanner = new Html5QrcodeScanner(
+            "reader", 
+            { 
+                fps: 10, // Tốc độ quét (khung hình/giây)
+                qrbox: {width: 250, height: 250} // Kích thước khung ngắm
+            }, 
+            false
+        );
+        
+        // Khởi động máy quét
+        html5QrcodeScanner.render(onScanSuccess);
+    </script>
 </body>
 </html>

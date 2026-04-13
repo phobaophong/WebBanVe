@@ -29,6 +29,7 @@ CREATE TABLE tbl_nguoidung (
     sdt VARCHAR(15) UNIQUE,
     so_du DECIMAL(15,2) DEFAULT 0 CHECK (so_du >= 0),
     vai_tro ENUM('admin', 'khach_hang') DEFAULT 'khach_hang',
+    trang_thai ENUM('hoat_dong', 'bi_khoa') DEFAULT 'hoat_dong',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 

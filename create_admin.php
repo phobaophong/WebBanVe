@@ -21,8 +21,8 @@ try {
         echo "<a href='pages/login.php'>Quay lại trang Đăng nhập</a>";
     } else {
         // Thực hiện Insert vào Database với vai_tro = 'admin'
-        $sql = "INSERT INTO tbl_nguoidung (ten_dang_nhap, mat_khau, ho_ten, email, sdt, vai_tro) 
-                VALUES (:user, :pass, :name, :email, :phone, 'admin')";
+        $sql = "INSERT INTO tbl_nguoidung (ten_dang_nhap, mat_khau, ho_ten, email, sdt, trang_thai, vai_tro) 
+                VALUES (:user, :pass, :name, :email, :phone, 'hoat_dong', 'admin')";
         $stmt = $conn->prepare($sql);
         $stmt->execute([
             'user' => $username,

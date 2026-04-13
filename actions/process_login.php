@@ -20,6 +20,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // Kiểm tra xem có user này không, và mật khẩu giải mã ra có đúng không
         if ($user && password_verify($password, $user['mat_khau'])) {
+            if ($user['trang_thai'] === 'bi_khoa') {
+                $_SESSION['error'] = "Tài khoản của bạn đã bị khóa do vi phạm chính sách!";
+                header("Location: ../pages/login.php");
+                exit();
+            }
             // Đăng nhập thành công -> Lưu thông tin vào Session
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['username'] = $user['ten_dang_nhap'];

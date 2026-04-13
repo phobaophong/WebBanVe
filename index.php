@@ -2,9 +2,7 @@
 session_start();
 require_once 'config/database.php'; 
 
-// ==========================================================================
-// TỰ ĐỘNG CẬP NHẬT TRẠNG THÁI TRẬN ĐẤU (CÁCH 1)
-// ==========================================================================
+// Cập nhật trạng thái trận đấu dựa trên thời gian hiện tại
 try {
     $conn->exec("
         UPDATE tbl_trandau 
@@ -20,16 +18,12 @@ try {
         WHERE trang_thai IN ('sap_dien_ra', 'dang_da') 
         AND NOW() >= DATE_ADD(thoi_gian, INTERVAL 120 MINUTE)
     ");
-} catch (PDOException $e) {
-    // Không hiện lỗi để tránh làm phiền trải nghiệm người dùng
-}
+} catch (PDOException $e) {}
 
 include 'includes/header.php';
 include 'includes/navbar.php';
 
-// ==========================================================================
-// XỬ LÝ LOGIC LẤY DỮ LIỆU VÀ BỘ LỌC
-// ==========================================================================
+// logic và lọc
 $league_filter_sql = "";
 $teams_params = [];
 
@@ -90,7 +84,7 @@ if (empty($_GET['from_date']) && empty($_GET['to_date']) && empty($selected_team
     $page_title = "KẾT QUẢ TÌM KIẾM";
 }
 ?>
-
+<!-- banner -->
 <div class="container mt-4">
     <?php
     $banner_dir = "assets/images/banners/";
@@ -160,6 +154,8 @@ if (empty($_GET['from_date']) && empty($_GET['to_date']) && empty($selected_team
     <h1 class="page-title"><?php echo $page_title; ?></h1>
     <p class="subtitle mb-4">Nhanh tay đặt vé để không bỏ lỡ những trận cầu đỉnh cao!</p>
     <div class="row">
+
+        <!--  bên trái  -->
         <aside class="col-12 col-lg-3 mb-4 mb-lg-0">
             <div class="sidebar-box">
                 <h4 class="sidebar-heading"><span class="sidebar-icon">⧉</span> LỌC NÂNG CAO</h4>
@@ -200,7 +196,7 @@ if (empty($_GET['from_date']) && empty($_GET['to_date']) && empty($selected_team
                 </form>
             </div>
         </aside>
-
+        <!--chính  giữa-->
         <main class="col-12 col-lg-6">
             <div class="match-grid">
                 <?php
@@ -216,10 +212,7 @@ if (empty($_GET['from_date']) && empty($_GET['to_date']) && empty($selected_team
                 $stmt->execute($params);
                 $all_matches = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 $total_matches = count($all_matches);
-                
-                // ==========================================
-                // ĐÃ ĐỔI TỪ 4 LÊN 6 TRẬN Ở ĐÂY
-                // ==========================================
+
                 $is_view_all = isset($_GET['view']) && $_GET['view'] == 'all';
                 $display_limit = $is_view_all ? $total_matches : 6; 
                 $show_btn = (!$is_view_all && $total_matches > 6);
@@ -264,7 +257,7 @@ if (empty($_GET['from_date']) && empty($_GET['to_date']) && empty($selected_team
             }
             ?>
         </main>
-        
+        <!-- bên phải -->
         <aside class="col-12 col-lg-3">
             <div class="widget-box widget-box-custom">
                 <h3 class="p-3 mb-0 text-center widget-header-blue">📺 HIGHLIGHTS MỚI NHẤT</h3>

@@ -3,7 +3,7 @@
 
         <div class="nav-left">
             <a href="<?php echo $base_url; ?>/index.php" class="logo" style="text-decoration: none;">
-                ⚽ Vé Bóng Đá
+                ⚽ Vé Bóng Đá Online
             </a>
         </div>
 

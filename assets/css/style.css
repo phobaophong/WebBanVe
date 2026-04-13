@@ -21,11 +21,10 @@ body {
 
    background-image: url('../images/system/hinh-nen.jpg');
    
-   /* 2. Các thuộc tính bắt buộc để ảnh hiển thị đẹp nhất */
-   background-size: cover;       /* Ép ảnh phóng to/thu nhỏ vừa khít toàn bộ màn hình */
-   background-position: center;  /* Căn hình ảnh luôn nằm ở giữa */
-   background-repeat: no-repeat; /* Không cho ảnh lặp đi lặp lại như viên gạch */
-   background-attachment: fixed; /* (Tùy chọn) Giữ hình nền đứng im khi cuộn chuột lên xuống */
+   background-size: cover;      
+   background-position: center; 
+   background-repeat: no-repeat; 
+   background-attachment: fixed; 
 }
 
 .container {
@@ -302,7 +301,7 @@ ul {
 
 
 .banner-img {
-   height: 500px;
+   height: 775px;
    object-fit: cover;
 }
 
@@ -378,14 +377,15 @@ ul {
 /* ==========================================================================
    PHẦN 5: CỘT TRÁI (BỘ LỌC) & CỘT PHẢI (WIDGET)
    ========================================================================== */
-.sidebar-box,
-.widget-box {
+.sidebar-box, .widget-box {
    background: white;
    padding: 20px;
    border-radius: 8px;
    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
    border: 1px solid #eee;
    margin-bottom: 20px;
+
+   /* min-height: 700px; */
 }
 
 .sidebar-heading {
@@ -417,7 +417,7 @@ ul {
 }
 
 .team-list-scroll {
-   max-height: 250px;
+   max-height: 425px;
    overflow-y: auto;
    padding-right: 5px;
 }
@@ -481,7 +481,7 @@ ul {
 
 .iframe-highlight {
    width: 100%;
-   height: 350px;
+   height: 410px;
    overflow: hidden;
    display: block;
 }
