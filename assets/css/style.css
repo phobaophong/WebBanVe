@@ -19,7 +19,7 @@ body {
    flex-direction: column;
    min-height: 100vh;
 
-   background-image: url('../images/system/hinh-nen.jpg');
+   background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.6)), url('../images/system/hinh-nen.jpg');
    
    background-size: cover;      
    background-position: center; 
@@ -546,7 +546,7 @@ ul {
 
 .subtitle {
    text-align: center;
-   color: #666;
+   color: #ffffff;
    margin-bottom: 20px;
 }
 
