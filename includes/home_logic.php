@@ -1,7 +1,5 @@
 <?php
-// =========================================================================
-// 1. CẬP NHẬT TRẠNG THÁI TRẬN ĐẤU TỰ ĐỘNG
-// =========================================================================
+// Cập nhật trạng thái trận đấu dựa trên thời gian hiện tại
 try {
     $conn->exec("
         UPDATE tbl_trandau 
@@ -19,9 +17,7 @@ try {
     ");
 } catch (PDOException $e) {}
 
-// =========================================================================
-// 2. XỬ LÝ LỌC VÀ CHUẨN BỊ DỮ LIỆU ĐỘI BÓNG
-// =========================================================================
+// logic
 $league_filter_sql = "";
 $teams_params = [];
 
@@ -43,9 +39,7 @@ $stmt_teams = $conn->prepare($sql_teams);
 $stmt_teams->execute($teams_params);
 $teams_list = $stmt_teams->fetchAll(PDO::FETCH_ASSOC);
 
-// =========================================================================
-// 3. XÂY DỰNG BỘ LỌC TÌM KIẾM TRẬN ĐẤU (WHERE CLAUSE)
-// =========================================================================
+// bộ lọc 
 $where_clause = "t.trang_thai = 'sap_dien_ra'";
 $params = [];
 

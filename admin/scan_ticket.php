@@ -29,9 +29,9 @@ unset($_SESSION['scan_msg'], $_SESSION['scan_type'], $_SESSION['scan_ticket_info
 <body class="admin-body">
 
     <header class="admin-header">
-        <h1 class="admin-title">📷 TRẠM KIỂM SOÁT VÉ QR</h1>
+        <h1 class="admin-title">TRẠM KIỂM SOÁT VÉ QR</h1>
         <div class="admin-nav-links">
-            <a href="index.php">🔙 Trở về Trang quản trị</a>
+            <a href="index.php">Trở về Trang quản trị</a>
         </div>
     </header>
 
