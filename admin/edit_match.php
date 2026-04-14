@@ -15,7 +15,6 @@ if ($id_trandau <= 0) {
     exit();
 }
 
-// 1. Lấy thông tin trận đấu cần sửa
 $stmt_match = $conn->prepare("SELECT * FROM tbl_trandau WHERE id = ?");
 $stmt_match->execute([$id_trandau]);
 $match = $stmt_match->fetch(PDO::FETCH_ASSOC);
@@ -24,17 +23,13 @@ if (!$match) {
     die("<div class='container mt-5'><h3 class='text-danger text-center'>Không tìm thấy trận đấu!</h3></div>");
 }
 
-// 2. KIỂM TRA ĐIỀU KIỆN KHÓA (Đã có vé được tạo chưa?)
-// Nếu Admin đã cài đặt vé cho trận này, tuyệt đối không cho sửa Tên đội và Giải đấu nữa
 $stmt_check_ticket = $conn->prepare("SELECT COUNT(*) FROM tbl_ve WHERE id_trandau = ?");
 $stmt_check_ticket->execute([$id_trandau]);
 $da_co_ve = ($stmt_check_ticket->fetchColumn() > 0);
 
-// Lấy danh sách Giải đấu & Đội bóng
 $leagues = $conn->query("SELECT * FROM tbl_giaidau ORDER BY ten_giai ASC")->fetchAll(PDO::FETCH_ASSOC);
 $teams = $conn->query("SELECT * FROM tbl_doibong ORDER BY ten_doi ASC")->fetchAll(PDO::FETCH_ASSOC);
 
-// Định dạng lại thời gian để hiển thị đúng trong thẻ <input type="datetime-local">
 $thoi_gian_format = date('Y-m-d\TH:i', strtotime($match['thoi_gian']));
 ?>
 
@@ -49,18 +44,22 @@ $thoi_gian_format = date('Y-m-d\TH:i', strtotime($match['thoi_gian']));
 <body class="admin-body">
 
     <header class="admin-header">
-        <h1 class="admin-title">✏️ CẬP NHẬT TRẬN ĐẤU #<?php echo $id_trandau; ?></h1>
+        <h1 class="admin-title">
+            <img src="<?php echo $base_url; ?>/assets/images/system/icon-edit.png" class="sys-icon" alt="icon"> CẬP NHẬT TRẬN ĐẤU #<?php echo $id_trandau; ?>
+        </h1>
         <div class="admin-nav-links">
-            <a href="index.php">🔙 Trở về Bảng Điều Khiển</a>
+            <a href="index.php">
+                <img src="<?php echo $base_url; ?>/assets/images/system/icon-back.png" class="sys-icon" alt="icon"> Trở về Bảng Điều Khiển
+            </a>
         </div>
     </header>
 
     <div class="container mt-5">
-        <div class="admin-table-container" style="max-width: 800px; margin: auto;">
+        <div class="admin-table-container admin-form-container">
             
             <?php if ($da_co_ve): ?>
                 <div class="alert alert-warning font-weight-bold">
-                    ⚠️ Trận đấu này đã được thiết lập vé bán. Hệ thống đã khóa chức năng sửa Giải đấu và Đội bóng để đảm bảo quyền lợi khách hàng.
+                    <img src="<?php echo $base_url; ?>/assets/images/system/icon-warning.png" class="sys-icon" alt="icon"> Trận đấu này đã được thiết lập vé bán. Hệ thống đã khóa chức năng sửa Giải đấu và Đội bóng để đảm bảo quyền lợi khách hàng.
                 </div>
             <?php endif; ?>
 

@@ -690,6 +690,11 @@ ul {
    background-color: #f8f9fc;
 }
 
+.admin-form-container {
+    max-width: 800px;
+    margin: auto;
+}
+
 .admin-header {
    background: #343a40;
    color: white;
@@ -823,6 +828,14 @@ ul {
 .badge-scan {
    font-size: 16px;
    padding: 12px 25px;
+}
+.qr-reader-box {
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto 20px auto;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
 /* 10. FOOTER */

@@ -15,7 +15,6 @@ if ($id_trandau <= 0) {
     exit();
 }
 
-// Lấy thông tin trận đấu
 $stmt_match = $conn->prepare("SELECT t.*, dn.ten_doi AS ten_nha, dk.ten_doi AS ten_khach 
                               FROM tbl_trandau t 
                               JOIN tbl_doibong dn ON t.id_doi_nha = dn.id 
@@ -28,10 +27,8 @@ if (!$match) {
     die("Không tìm thấy trận đấu!");
 }
 
-// Lấy danh sách hạng vé để cho vào Dropdown
 $hangve = $conn->query("SELECT * FROM tbl_hangve ORDER BY id ASC")->fetchAll(PDO::FETCH_ASSOC);
 
-// Lấy danh sách vé ĐÃ TẠO cho trận này
 $stmt_ve = $conn->prepare("SELECT v.*, h.ten_hang FROM tbl_ve v JOIN tbl_hangve h ON v.id_hangve = h.id WHERE v.id_trandau = ? ORDER BY v.gia_tien ASC");
 $stmt_ve->execute([$id_trandau]);
 $danhsach_ve = $stmt_ve->fetchAll(PDO::FETCH_ASSOC);
@@ -48,9 +45,13 @@ $danhsach_ve = $stmt_ve->fetchAll(PDO::FETCH_ASSOC);
 <body class="admin-body">
 
     <header class="admin-header">
-        <h1 class="admin-title">🎟️ QUẢN LÝ VÉ TRẬN ĐẤU</h1>
+        <h1 class="admin-title">
+            <img src="<?php echo $base_url; ?>/assets/images/system/icon-ticket.png" class="sys-icon" alt="icon"> QUẢN LÝ VÉ TRẬN ĐẤU
+        </h1>
         <div class="admin-nav-links">
-            <a href="index.php">🔙 Trở về Bảng Điều Khiển</a>
+            <a href="index.php">
+                <img src="<?php echo $base_url; ?>/assets/images/system/icon-back.png" class="sys-icon" alt="icon"> Trở về Bảng Điều Khiển
+            </a>
         </div>
     </header>
 
@@ -95,7 +96,7 @@ $danhsach_ve = $stmt_ve->fetchAll(PDO::FETCH_ASSOC);
             <div class="col-md-8">
                 <div class="admin-table-container mt-0">
                     <h4 class="font-weight-bold text-danger mb-3">
-                        Trận: <?php echo htmlspecialchars($match['ten_nha']); ?> ⚡ <?php echo htmlspecialchars($match['ten_khach']); ?>
+                        Trận: <?php echo htmlspecialchars($match['ten_nha']); ?> <img src="<?php echo $base_url; ?>/assets/images/system/icon-flash.png" class="sys-icon" alt="icon"> <?php echo htmlspecialchars($match['ten_khach']); ?>
                     </h4>
                     <p class="text-muted">Lịch thi đấu: <?php echo date('d/m/Y H:i', strtotime($match['thoi_gian'])); ?> | Sân: <?php echo htmlspecialchars($match['san_van_dong']); ?></p>
                     

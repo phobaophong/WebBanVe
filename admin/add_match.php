@@ -9,7 +9,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
 
 $base_url = "/WEBBANVE";
 
-// Lấy danh sách Giải đấu & Đội bóng để load vào form thủ công
 $leagues = $conn->query("SELECT * FROM tbl_giaidau ORDER BY ten_giai ASC")->fetchAll(PDO::FETCH_ASSOC);
 $teams = $conn->query("SELECT * FROM tbl_doibong ORDER BY ten_doi ASC")->fetchAll(PDO::FETCH_ASSOC);
 ?>
@@ -26,14 +25,18 @@ $teams = $conn->query("SELECT * FROM tbl_doibong ORDER BY ten_doi ASC")->fetchAl
 <body class="admin-body">
 
     <header class="admin-header">
-        <h1 class="admin-title">➕ THÊM TRẬN ĐẤU MỚI</h1>
+        <h1 class="admin-title">
+            <img src="<?php echo $base_url; ?>/assets/images/system/icon-add.png" class="sys-icon" alt="icon"> THÊM TRẬN ĐẤU MỚI
+        </h1>
         <div class="admin-nav-links">
-            <a href="index.php">🔙 Trở về Bảng Điều Khiển</a>
+            <a href="index.php">
+                <img src="<?php echo $base_url; ?>/assets/images/system/icon-back.png" class="sys-icon" alt="icon"> Trở về Bảng Điều Khiển
+            </a>
         </div>
     </header>
 
     <div class="container mt-5">
-        <div class="admin-table-container" style="max-width: 800px; margin: auto;">
+        <div class="admin-table-container admin-form-container">
             
             <?php 
             if (isset($_SESSION['error'])) {
@@ -43,8 +46,16 @@ $teams = $conn->query("SELECT * FROM tbl_doibong ORDER BY ten_doi ASC")->fetchAl
             ?>
 
             <ul class="nav nav-tabs admin-tabs" role="tablist">
-                <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#manual">📝 THÊM THỦ CÔNG</a></li>
-                <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#upload">📁 THÊM BẰNG FILE (CSV)</a></li>
+                <li class="nav-item">
+                    <a class="nav-link active" data-toggle="tab" href="#manual">
+                        <img src="<?php echo $base_url; ?>/assets/images/system/icon-edit.png" class="sys-icon" alt="icon"> THÊM THỦ CÔNG
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#upload">
+                        <img src="<?php echo $base_url; ?>/assets/images/system/icon-file.png" class="sys-icon" alt="icon"> THÊM BẰNG FILE (CSV)
+                    </a>
+                </li>
             </ul>
 
             <div class="tab-content">
@@ -143,49 +154,34 @@ $teams = $conn->query("SELECT * FROM tbl_doibong ORDER BY ten_doi ASC")->fetchAl
         const homeTeam = document.getElementById('homeTeam');
         const awayTeam = document.getElementById('awayTeam');
 
-        // 1. Lắng nghe sự kiện thay đổi Giải Đấu
         leagueSelect.addEventListener('change', function() {
             const selectedLeague = this.value;
-            
-            // Nếu chọn về trống, khóa luôn 2 ô đội bóng
             if(selectedLeague === "") {
                 homeTeam.disabled = true;
                 awayTeam.disabled = true;
                 return;
             }
-
-            // Bật 2 ô chọn đội lên
             homeTeam.disabled = false;
             awayTeam.disabled = false;
-            
-            // Đặt lại lựa chọn về mặc định
             homeTeam.value = "";
             awayTeam.value = "";
-
-            // Tiến hành lọc danh sách
             filterOptionsByLeague(homeTeam, selectedLeague);
             filterOptionsByLeague(awayTeam, selectedLeague);
         });
 
-        // 2. Lắng nghe sự kiện khi chọn Đội Nhà (để loại trừ bên Đội Khách)
         homeTeam.addEventListener('change', function() {
             const selectedHome = this.value;
             const currentLeague = leagueSelect.value;
-            
-            // Làm mới lại ô Đội Khách (lọc theo giải và ẩn đội nhà đang chọn)
             filterOptionsByLeague(awayTeam, currentLeague, selectedHome);
         });
 
-        // Hàm ẩn/hiện logic
         function filterOptionsByLeague(selectElement, leagueId, excludeId = null) {
             const options = selectElement.querySelectorAll('option');
             options.forEach(opt => {
-                if (opt.value === "") return; // Bỏ qua chữ "Chọn đội..." mặc định
-                
+                if (opt.value === "") return;
                 const optLeague = opt.getAttribute('data-league-id');
                 const isExcluded = (opt.value === excludeId);
 
-                // Chỉ hiện option nếu nó thuộc giải được chọn VÀ nó không bị loại trừ
                 if (optLeague === leagueId && !isExcluded) {
                     opt.style.display = 'block';
                     opt.disabled = false;

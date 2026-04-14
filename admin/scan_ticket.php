@@ -1,6 +1,5 @@
 <?php
 session_start();
-// Chỉ cho phép Admin vào trang này
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     header("Location: ../index.php");
     exit();
@@ -8,12 +7,10 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
 
 $base_url = "/WEBBANVE";
 
-// Lấy kết quả từ process_scan.php trả về (nếu có)
 $thong_bao = isset($_SESSION['scan_msg']) ? $_SESSION['scan_msg'] : "";
 $loai_thong_bao = isset($_SESSION['scan_type']) ? $_SESSION['scan_type'] : "";
 $chi_tiet_ve = isset($_SESSION['scan_ticket_info']) ? $_SESSION['scan_ticket_info'] : null;
 
-// Xóa Session ngay sau khi lấy xong để F5 không bị hiện lại
 unset($_SESSION['scan_msg'], $_SESSION['scan_type'], $_SESSION['scan_ticket_info']);
 ?>
 
@@ -29,16 +26,20 @@ unset($_SESSION['scan_msg'], $_SESSION['scan_type'], $_SESSION['scan_ticket_info
 <body class="admin-body">
 
     <header class="admin-header">
-        <h1 class="admin-title">TRẠM KIỂM SOÁT VÉ QR</h1>
+        <h1 class="admin-title">
+            <img src="<?php echo $base_url; ?>/assets/images/system/icon-qr.png" class="sys-icon" alt="icon"> TRẠM KIỂM SOÁT VÉ QR
+        </h1>
         <div class="admin-nav-links">
-            <a href="index.php">Trở về Trang quản trị</a>
+            <a href="index.php">
+                <img src="<?php echo $base_url; ?>/assets/images/system/icon-back.png" class="sys-icon" alt="icon"> Trở về Trang quản trị
+            </a>
         </div>
     </header>
 
     <div class="container scan-container">
         <div class="admin-table-container text-center">
             
-            <div id="reader" style="width: 100%; max-width: 500px; margin: 0 auto 20px auto; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1);"></div>
+            <div id="reader" class="qr-reader-box"></div>
 
             <h5 class="mb-3 text-secondary font-weight-bold">HOẶC NHẬP MÃ THỦ CÔNG</h5>
             
@@ -48,7 +49,7 @@ unset($_SESSION['scan_msg'], $_SESSION['scan_type'], $_SESSION['scan_ticket_info
                            placeholder="Mã sẽ tự hiện khi quét thành công..." autofocus required autocomplete="off">
                 </div>
                 <button type="submit" class="btn btn-success btn-lg btn-block mt-3 btn-rounded">
-                    🔍 KIỂM TRA MÃ
+                    <img src="<?php echo $base_url; ?>/assets/images/system/icon-search.png" class="sys-icon-btn" alt="icon"> KIỂM TRA MÃ
                 </button>
             </form>
 
@@ -61,11 +62,17 @@ unset($_SESSION['scan_msg'], $_SESSION['scan_type'], $_SESSION['scan_ticket_info
             <?php if ($chi_tiet_ve): ?>
                 <div class="ticket-info text-left">
                     <h5 class="text-danger font-weight-bold border-bottom pb-2 mb-3">
-                        ⚽ <?php echo htmlspecialchars($chi_tiet_ve['ten_trandau']); ?>
+                        <img src="<?php echo $base_url; ?>/assets/images/system/icon-ball.png" class="sys-icon" alt="icon"> <?php echo htmlspecialchars($chi_tiet_ve['ten_trandau']); ?>
                     </h5>
-                    <p class="mb-2 ticket-text"><b>👤 Khách hàng:</b> <?php echo htmlspecialchars($chi_tiet_ve['ho_ten']); ?></p>
-                    <p class="mb-2 ticket-text"><b>🎟️ Hạng vé:</b> <?php echo htmlspecialchars($chi_tiet_ve['ten_hangve']); ?></p>
-                    <p class="mb-3 ticket-text"><b>🏷️ Mã code:</b> <span class="text-primary font-weight-bold"><?php echo htmlspecialchars($chi_tiet_ve['ma_donhang_qr']); ?></span></p>
+                    <p class="mb-2 ticket-text">
+                        <b><img src="<?php echo $base_url; ?>/assets/images/system/icon-user.png" class="sys-icon" alt="icon"> Khách hàng:</b> <?php echo htmlspecialchars($chi_tiet_ve['ho_ten']); ?>
+                    </p>
+                    <p class="mb-2 ticket-text">
+                        <b><img src="<?php echo $base_url; ?>/assets/images/system/icon-ticket.png" class="sys-icon" alt="icon"> Hạng vé:</b> <?php echo htmlspecialchars($chi_tiet_ve['ten_hangve']); ?>
+                    </p>
+                    <p class="mb-3 ticket-text">
+                        <b><img src="<?php echo $base_url; ?>/assets/images/system/icon-tag.png" class="sys-icon" alt="icon"> Mã code:</b> <span class="text-primary font-weight-bold"><?php echo htmlspecialchars($chi_tiet_ve['ma_donhang_qr']); ?></span>
+                    </p>
                     
                     <div class="text-center mt-4">
                         <?php if ($chi_tiet_ve['trang_thai_donhang'] === 'da_su_dung'): ?>

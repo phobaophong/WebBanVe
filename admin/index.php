@@ -9,53 +9,44 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
 
 $base_url = "/WEBBANVE"; 
 
-// Biến lưu trữ tab đang active
 $active_tab = 'match'; 
 $msg = "";
 
-// ==========================================================================
-// 1. XỬ LÝ LOGIC (KHÔNG TÁCH FILE, GỘP CHUNG TẠI ĐÂY)
-// ==========================================================================
 if (isset($_GET['action']) && isset($_GET['id'])) {
     $id_del = (int)$_GET['id'];
     try {
-        // --- XÓA TRẬN ĐẤU ---
         if ($_GET['action'] == 'delete_match') {
             $stmt = $conn->prepare("DELETE FROM tbl_trandau WHERE id = :id");
             $stmt->execute(['id' => $id_del]);
             $active_tab = 'match';
         } 
-        
-        // --- CÀI VÉ NHANH ---
         elseif ($_GET['action'] == 'quick_ticket') {
-            // 1. Kiểm tra xem trận đấu này đã có vé nào được tạo chưa
             $stmt_check = $conn->prepare("SELECT COUNT(*) FROM tbl_ve WHERE id_trandau = :id");
             $stmt_check->execute(['id' => $id_del]);
             
             if ($stmt_check->fetchColumn() > 0) {
                 $msg = "<div class='alert alert-warning alert-dismissible fade show'><strong>Cảnh báo!</strong> Trận đấu này đã được cài đặt vé trước đó. Bạn hãy vào Cài vé thủ công để xem chi tiết.<button type='button' class='close' data-dismiss='alert'><span>&times;</span></button></div>";
             } else {
-                // 2. Lấy danh sách hạng vé từ DB
                 $hangve = $conn->query("SELECT * FROM tbl_hangve")->fetchAll(PDO::FETCH_ASSOC);
                 $stmt_insert = $conn->prepare("INSERT INTO tbl_ve (id_trandau, id_hangve, gia_tien, so_luong_con) VALUES (?, ?, ?, ?)");
                 
                 foreach ($hangve as $hv) {
                     $ten_hang = mb_strtolower($hv['ten_hang'], 'UTF-8');
-                    $so_luong = 700; // Mặc định là 700
+                    $so_luong = 700;
                     $gia_tien = 200000; 
 
                     if (strpos($ten_hang, 'vip') !== false) {
                         $so_luong = 200;
-                        $gia_tien = 1000000; // VIP 1 triệu
+                        $gia_tien = 1000000;
                     } elseif (strpos($ten_hang, 'a') !== false) {
                         $so_luong = 700;
-                        $gia_tien = 500000; // Khán đài A 500k
+                        $gia_tien = 500000;
                     } elseif (strpos($ten_hang, 'b') !== false) {
                         $so_luong = 700;
-                        $gia_tien = 300000; // Khán đài B 300k
+                        $gia_tien = 300000;
                     } elseif (strpos($ten_hang, 'c') !== false) {
                         $so_luong = 700;
-                        $gia_tien = 200000; // Khán đài C 200k
+                        $gia_tien = 200000;
                     }
                     
                     $stmt_insert->execute([$id_del, $hv['id'], $gia_tien, $so_luong]);
@@ -64,8 +55,6 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
             }
             $active_tab = 'match';
         }
-
-        // --- KHÓA / MỞ KHÓA TÀI KHOẢN ---
         elseif ($_GET['action'] == 'toggle_status') {
             $stmt_status = $conn->prepare("SELECT trang_thai FROM tbl_nguoidung WHERE id = :id AND vai_tro = 'khach_hang'");
             $stmt_status->execute(['id' => $id_del]);
@@ -83,15 +72,11 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
     }
 }
 
-// Bắt thông báo từ các form khác (thêm trận đấu, sửa trận đấu) chuyển về
 if (isset($_SESSION['admin_msg'])) {
     $msg = $_SESSION['admin_msg'];
     unset($_SESSION['admin_msg']);
 }
 
-// ==========================================================================
-// 2. TRUY VẤN DỮ LIỆU BẢNG ĐIỀU KHIỂN
-// ==========================================================================
 $count_match = $conn->query("SELECT COUNT(*) FROM tbl_trandau")->fetchColumn();
 $count_user = $conn->query("SELECT COUNT(*) FROM tbl_nguoidung WHERE vai_tro = 'khach_hang'")->fetchColumn();
 $sum_revenue = $conn->query("SELECT SUM(tong_tien) FROM tbl_donhang")->fetchColumn();
@@ -99,7 +84,6 @@ $sum_revenue = $sum_revenue ? $sum_revenue : 0;
 
 $leagues = $conn->query("SELECT * FROM tbl_giaidau ORDER BY ten_giai ASC")->fetchAll(PDO::FETCH_ASSOC);
 
-// Bộ lọc giải đấu
 $filter_sql = "";
 $filter_params = [];
 if (!empty($_GET['filter_league'])) {
@@ -135,12 +119,20 @@ $users = $conn->query($sql_users)->fetchAll(PDO::FETCH_ASSOC);
 <body class="admin-body">
 
     <header class="admin-header">
-        <h1 class="admin-title">🛠️ BẢNG ĐIỀU KHIỂN ADMIN</h1>
+        <h1 class="admin-title">
+            <img src="<?php echo $base_url; ?>/assets/images/system/icon-settings.png" class="sys-icon" alt="icon"> BẢNG ĐIỀU KHIỂN ADMIN
+        </h1>
         <div class="admin-nav-links">
             <span class="text-warning font-weight-bold mr-3">Xin chào, <?php echo htmlspecialchars($_SESSION['username']); ?>!</span>
-            <a href="scan_ticket.php" class="text-warning font-weight-bold mr-3" style="font-size: 18px;">📷 Soát Vé QR</a>
-            <a href="<?php echo $base_url; ?>/index.php">🌐 Trở về Website</a>
-            <a href="<?php echo $base_url; ?>/actions/process_logout.php" class="text-danger">Đăng xuất</a>
+            <a href="scan_ticket.php" class="text-warning font-weight-bold mr-3">
+                <img src="<?php echo $base_url; ?>/assets/images/system/icon-qr.png" class="sys-icon" alt="icon"> Soát Vé QR
+            </a>
+            <a href="<?php echo $base_url; ?>/index.php">
+                <img src="<?php echo $base_url; ?>/assets/images/system/icon-website.png" class="sys-icon" alt="icon"> Trở về Website
+            </a>
+            <a href="<?php echo $base_url; ?>/actions/process_logout.php" class="text-danger">
+                Đăng xuất
+            </a>
         </div>
     </header>
 
@@ -148,9 +140,33 @@ $users = $conn->query($sql_users)->fetchAll(PDO::FETCH_ASSOC);
         <?php echo $msg; ?>
 
         <div class="row mb-4">
-            <div class="col-md-4 mb-3"><div class="stat-card bg-blue d-flex justify-content-between align-items-center"><div><h5 class="font-weight-bold">TỔNG TRẬN ĐẤU</h5><h2><?php echo $count_match; ?></h2></div><div class="stat-icon">⚽</div></div></div>
-            <div class="col-md-4 mb-3"><div class="stat-card bg-green d-flex justify-content-between align-items-center"><div><h5 class="font-weight-bold">TỔNG KHÁCH HÀNG</h5><h2><?php echo $count_user; ?></h2></div><div class="stat-icon">👥</div></div></div>
-            <div class="col-md-4 mb-3"><div class="stat-card bg-red d-flex justify-content-between align-items-center"><div><h5 class="font-weight-bold">TỔNG DOANH THU</h5><h2><?php echo number_format($sum_revenue, 0, ',', '.'); ?>đ</h2></div><div class="stat-icon">💰</div></div></div>
+            <div class="col-md-4 mb-3">
+                <div class="stat-card bg-blue d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="font-weight-bold">TỔNG TRẬN ĐẤU</h5>
+                        <h2><?php echo $count_match; ?></h2>
+                    </div>
+                    <div class="stat-icon"><img src="<?php echo $base_url; ?>/assets/images/system/icon-ball-white.png" class="sys-icon-btn" alt="icon"></div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="stat-card bg-green d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="font-weight-bold">TỔNG KHÁCH HÀNG</h5>
+                        <h2><?php echo $count_user; ?></h2>
+                    </div>
+                    <div class="stat-icon"><img src="<?php echo $base_url; ?>/assets/images/system/icon-users-white.png" class="sys-icon-btn" alt="icon"></div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="stat-card bg-red d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="font-weight-bold">TỔNG DOANH THU</h5>
+                        <h2><?php echo number_format($sum_revenue, 0, ',', '.'); ?>đ</h2>
+                    </div>
+                    <div class="stat-icon"><img src="<?php echo $base_url; ?>/assets/images/system/icon-money-white.png" class="sys-icon-btn" alt="icon"></div>
+                </div>
+            </div>
         </div>
 
         <div class="admin-table-container">
@@ -179,7 +195,9 @@ $users = $conn->query($sql_users)->fetchAll(PDO::FETCH_ASSOC);
                                     <?php endforeach; ?>
                                 </select>
                             </form>
-                            <a href="add_match.php" class="btn btn-success font-weight-bold">+ Thêm Trận Đấu</a>
+                            <a href="add_match.php" class="btn btn-success font-weight-bold">
+                                <img src="<?php echo $base_url; ?>/assets/images/system/icon-add.png" class="sys-icon" alt="icon"> Thêm Trận Đấu
+                            </a>
                         </div>
                     </div>
                     
@@ -204,12 +222,20 @@ $users = $conn->query($sql_users)->fetchAll(PDO::FETCH_ASSOC);
                                     </td>
                                     <td class="text-center">
                                         <?php if($m['trang_thai'] == 'sap_dien_ra'): ?>
-                                            <a href="manage_tickets.php?id_trandau=<?php echo $m['id']; ?>" class="text-warning font-weight-bold mr-2" title="Cài đặt vé thủ công">🎟️ Cài vé</a>
-                                            <a href="index.php?action=quick_ticket&id=<?php echo $m['id']; ?>" class="text-success font-weight-bold mr-3" onclick="return confirm('Hệ thống sẽ tự tạo 700 vé thường và 200 vé VIP. Bạn có chắc chắn?');" title="Auto tạo vé (700 Thường, 200 VIP)">⚡ Nhanh</a>
+                                            <a href="manage_tickets.php?id_trandau=<?php echo $m['id']; ?>" class="text-warning font-weight-bold mr-2" title="Cài đặt vé thủ công">
+                                                <img src="<?php echo $base_url; ?>/assets/images/system/icon-ticket.png" class="sys-icon" alt="icon"> Cài vé
+                                            </a>
+                                            <a href="index.php?action=quick_ticket&id=<?php echo $m['id']; ?>" class="text-success font-weight-bold mr-3" onclick="return confirm('Hệ thống sẽ tự tạo 700 vé thường và 200 vé VIP. Bạn có chắc chắn?');" title="Auto tạo vé (700 Thường, 200 VIP)">
+                                                <img src="<?php echo $base_url; ?>/assets/images/system/icon-flash.png" class="sys-icon" alt="icon"> Nhanh
+                                            </a>
                                         <?php endif; ?>
                                         
-                                        <a href="edit_match.php?id=<?php echo $m['id']; ?>" class="text-info font-weight-bold mr-2">✏️ Sửa</a>
-                                        <a href="index.php?action=delete_match&id=<?php echo $m['id']; ?>" class="text-danger font-weight-bold" onclick="return confirm('Bạn có chắc chắn xóa trận đấu này?');">🗑️ Xóa</a>
+                                        <a href="edit_match.php?id=<?php echo $m['id']; ?>" class="text-info font-weight-bold mr-2">
+                                            <img src="<?php echo $base_url; ?>/assets/images/system/icon-edit-blue.png" class="sys-icon" alt="icon"> Sửa
+                                        </a>
+                                        <a href="index.php?action=delete_match&id=<?php echo $m['id']; ?>" class="text-danger font-weight-bold" onclick="return confirm('Bạn có chắc chắn xóa trận đấu này?');">
+                                            <img src="<?php echo $base_url; ?>/assets/images/system/icon-delete.png" class="sys-icon" alt="icon"> Xóa
+                                        </a>
                                     </td>
                                 </tr>
                                 <?php endforeach; ?>
@@ -241,7 +267,10 @@ $users = $conn->query($sql_users)->fetchAll(PDO::FETCH_ASSOC);
                                     <td><b>#<?php echo $u['id']; ?></b></td>
                                     <td class="font-weight-bold"><?php echo htmlspecialchars($u['ho_ten']); ?></td>
                                     <td><?php echo htmlspecialchars($u['ten_dang_nhap']); ?></td>
-                                    <td><div>✉️ <?php echo htmlspecialchars($u['email']); ?></div><div>📞 <?php echo htmlspecialchars($u['sdt']); ?></div></td>
+                                    <td>
+                                        <div><img src="<?php echo $base_url; ?>/assets/images/system/icon-email.png" class="sys-icon" alt="icon"> <?php echo htmlspecialchars($u['email']); ?></div>
+                                        <div><img src="<?php echo $base_url; ?>/assets/images/system/icon-phone.png" class="sys-icon" alt="icon"> <?php echo htmlspecialchars($u['sdt']); ?></div>
+                                    </td>
                                     <td class="font-weight-bold text-danger"><?php echo number_format($u['so_du'], 0, ',', '.'); ?>đ</td>
                                     
                                     <td>
@@ -254,9 +283,13 @@ $users = $conn->query($sql_users)->fetchAll(PDO::FETCH_ASSOC);
 
                                     <td class="text-center">
                                         <?php if(isset($u['trang_thai']) && $u['trang_thai'] == 'hoat_dong'): ?>
-                                            <a href="index.php?action=toggle_status&id=<?php echo $u['id']; ?>" class="btn btn-sm btn-outline-danger font-weight-bold" onclick="return confirm('Bạn có chắc muốn KHÓA tài khoản này?');">🔒 Khóa</a>
+                                            <a href="index.php?action=toggle_status&id=<?php echo $u['id']; ?>" class="btn btn-sm btn-outline-danger font-weight-bold" onclick="return confirm('Bạn có chắc muốn KHÓA tài khoản này?');">
+                                                <img src="<?php echo $base_url; ?>/assets/images/system/icon-lock.png" class="sys-icon" alt="icon"> Khóa
+                                            </a>
                                         <?php else: ?>
-                                            <a href="index.php?action=toggle_status&id=<?php echo $u['id']; ?>" class="btn btn-sm btn-outline-success font-weight-bold" onclick="return confirm('Xác nhận MỞ KHÓA cho tài khoản này?');">🔓 Mở khóa</a>
+                                            <a href="index.php?action=toggle_status&id=<?php echo $u['id']; ?>" class="btn btn-sm btn-outline-success font-weight-bold" onclick="return confirm('Xác nhận MỞ KHÓA cho tài khoản này?');">
+                                                <img src="<?php echo $base_url; ?>/assets/images/system/icon-unlock.png" class="sys-icon" alt="icon"> Mở khóa
+                                            </a>
                                         <?php endif; ?>
                                     </td>
                                 </tr>
