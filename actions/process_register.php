@@ -2,15 +2,34 @@
 session_start();
 require_once '../config/database.php';
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {  
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = trim($_POST['username']);
     $password = $_POST['password'];
+    $confirm_password = $_POST['confirm_password'];
     $fullname = trim($_POST['fullname']);
     $email = trim($_POST['email']);
     $phone = trim($_POST['phone']);
 
-    if (empty($username) || empty($password)) {
-        $_SESSION['error'] = "Tên đăng nhập và mật khẩu không được để trống!";
+    if (empty($username) || empty($password) || empty($confirm_password)) {
+        $_SESSION['error'] = "Vui lòng nhập đầy đủ thông tin!";
+        header("Location: ../pages/register.php");
+        exit();
+    }
+
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $_SESSION['error'] = "Email không hợp lệ!";
+        header("Location: ../pages/register.php");
+        exit();
+    }
+
+    if (strlen($password) < 6) {
+        $_SESSION['error'] = "Mật khẩu phải ít nhất 6 ký tự!";
+        header("Location: ../pages/register.php");
+        exit();
+    }
+
+    if ($password !== $confirm_password) {
+        $_SESSION['error'] = "Mật khẩu không khớp!";
         header("Location: ../pages/register.php");
         exit();
     }
@@ -28,20 +47,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
         $insert_stmt = $conn->prepare("INSERT INTO tbl_nguoidung (ten_dang_nhap, mat_khau, ho_ten, email, sdt) VALUES (:username, :password, :fullname, :email, :phone)");
-        
+
         $inserted = $insert_stmt->execute([
             'username' => $username,
             'password' => $hashed_password,
             'fullname' => $fullname,
-            'email'    => $email,
-            'phone'    => $phone
+            'email' => $email,
+            'phone' => $phone
         ]);
 
         if ($inserted) {
             $_SESSION['user_id'] = $conn->lastInsertId();
             $_SESSION['username'] = $username;
             $_SESSION['role'] = 'khach_hang';
-            
+
             header("Location: ../index.php");
             exit();
         } else {

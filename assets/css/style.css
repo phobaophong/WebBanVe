@@ -213,7 +213,6 @@ ul {
    list-style: none;
    padding: 10px 0;
    margin: 0;
-   overflow-x: auto;
    scrollbar-width: none;
    /* Firefox */
 }
@@ -628,7 +627,7 @@ ul {
 .preset-amounts {
    display: flex;
    gap: 10px;
-   flex-wrap: wrap;
+   flex-wrap: nowrap;
    margin-bottom: 20px;
 }
 

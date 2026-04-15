@@ -89,7 +89,7 @@ include 'includes/navbar.php';
     <div class="row">
 
         <!--  bên trái  -->
-        <aside class="col-12 col-lg-3 mb-4 mb-lg-0">
+        <aside class="col-3">
             <div class="sidebar-box">
                 <h4 class="sidebar-heading">
                     <img src="assets/images/system/icon-filter.png" class="sys-icon" alt="icon"> LỌC NÂNG CAO
@@ -140,7 +140,7 @@ include 'includes/navbar.php';
             </div>
         </aside>
         <!--chính  giữa-->
-        <main class="col-12 col-lg-6">
+        <main class="col-6">
             <div class="match-grid">
                 <?php
                 $sql = "SELECT  t.id, 
@@ -208,7 +208,7 @@ include 'includes/navbar.php';
             ?>
         </main>
         <!-- bên phải -->
-        <aside class="col-12 col-lg-3">
+        <aside class="col-3">
             <div class="widget-box widget-box-custom">
                 <h3 class="p-3 mb-0 text-center widget-header-blue">
                     <img src="assets/images/system/icon-tv.png" class="sys-icon" alt="icon"> HIGHLIGHTS MỚI NHẤT
