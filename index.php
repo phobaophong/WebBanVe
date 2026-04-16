@@ -138,6 +138,9 @@ include 'includes/navbar.php';
                         <?php endif; ?>
                     </form>
             </div>
+
+
+            
         </aside>
         <!--chính  giữa-->
         <main class="col-6">
@@ -294,9 +297,13 @@ include 'includes/navbar.php';
                 <div class="text-center p-2 ranking-footer">
                     <a href="#" class="ranking-link">Xem toàn bộ bảng xếp hạng &rarr;</a>
                 </div>
-            </div>
+            </div>    
+            
+            
+           
         </aside>
     </div>
 </div>
+
 
 <?php include 'includes/footer.php'; ?>

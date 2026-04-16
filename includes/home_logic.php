@@ -1,4 +1,8 @@
 <?php
+// $sql_hangve = "SELECT * FROM tbl_hangve ";
+// $stmt_hangve = $conn->prepare($sql_hangve);
+// $stmt_hangve->execute();
+// $hangve_list = $stmt_hangve->fetchAll(PDO::FETCH_ASSOC);
 // Cập nhật trạng thái trận đấu dựa trên thời gian hiện tại
 try {
     $conn->exec("
@@ -78,4 +82,5 @@ if (empty($_GET['from_date']) && empty($_GET['to_date']) && empty($selected_team
 } else {
     $page_title = "KẾT QUẢ TÌM KIẾM";
 }
+
 ?>

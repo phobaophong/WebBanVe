@@ -54,6 +54,7 @@ ul {
    margin-right: 8px;
 }
 
+
 /* 2. NAVBAR & HEADER */
 .header {
    position: relative;
@@ -75,6 +76,16 @@ ul {
    font-size: 22px;
    font-weight: bold;
    text-decoration: none;
+   display: flex;        
+   align-items: center;  
+   gap: 10px;
+}
+
+.logo img {
+   width: 38px !important;  
+   height: 38px !important;
+   object-fit: contain;
+   margin: 0 !important;   
 }
 
 .nav-right {
@@ -91,6 +102,14 @@ ul {
 .user-name {
    color: #fff;
    font-weight: bold;
+   display: flex;
+   align-items: center;
+   gap: 6px;
+}
+.user-name img {
+   width: 50px !important;  
+   height: 50px !important;
+   object-fit: contain;
 }
 
 .dropdown-menu-custom {
