@@ -25,11 +25,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['ma_ve'])) {
         $chi_tiet_ve = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if (!$chi_tiet_ve) {
-            $_SESSION['scan_msg'] = "❌ VÉ GIẢ! Không tìm thấy mã vé này trong hệ thống.";
+            $_SESSION['scan_msg'] = " VÉ GIẢ! Không tìm thấy mã vé này trong hệ thống.";
             $_SESSION['scan_type'] = "danger";
         } else {
             if ($chi_tiet_ve['trang_thai_donhang'] === 'da_su_dung') {
-                $_SESSION['scan_msg'] = "⚠️ CẢNH BÁO: Vé này ĐÃ ĐƯỢC QUÉT TRƯỚC ĐÓ. Có dấu hiệu gian lận!";
+                $_SESSION['scan_msg'] = " CẢNH BÁO: Vé này ĐÃ ĐƯỢC QUÉT TRƯỚC ĐÓ. Có dấu hiệu gian lận!";
                 $_SESSION['scan_type'] = "warning";
                 $_SESSION['scan_ticket_info'] = $chi_tiet_ve; // Gửi thông tin vé qua Session
             } else {
@@ -37,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['ma_ve'])) {
                 $stmt_update = $conn->prepare("UPDATE tbl_chitiet_donhang SET trang_thai_donhang = 'da_su_dung' WHERE ma_donhang_qr = ?");
                 $stmt_update->execute([$ma_ve]);
                 
-                $_SESSION['scan_msg'] = "✅ SOÁT VÉ THÀNH CÔNG! Cho phép khách qua cửa.";
+                $_SESSION['scan_msg'] = " SOÁT VÉ THÀNH CÔNG! Cho phép khách qua cửa.";
                 $_SESSION['scan_type'] = "success";
                 
                 // Cập nhật lại trạng thái ảo để hiển thị

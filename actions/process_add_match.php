@@ -10,9 +10,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $action_type = $_POST['action_type'];
 
-    // ==========================================
-    // TRƯỜNG HỢP 1: THÊM THỦ CÔNG
-    // ==========================================
+
     if ($action_type == 'manual') {
         $id_giaidau = (int)$_POST['id_giaidau'];
         $id_doi_nha = (int)$_POST['id_doi_nha'];
@@ -47,9 +45,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
-    // ==========================================
-    // TRƯỜNG HỢP 2: UPLOAD BẰNG FILE CSV
-    // ==========================================
+
     elseif ($action_type == 'csv') {
         if (isset($_FILES['file_csv']) && $_FILES['file_csv']['error'] == 0) {
             $file_tmp = $_FILES['file_csv']['tmp_name'];

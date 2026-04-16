@@ -15,7 +15,7 @@ include '../includes/navbar.php';
         <h2 class="text-center font-weight-bold mb-4 deposit-title"> NẠP TIỀN TÀI KHOẢN</h2>
         
         <div class="alert alert-info text-center mb-4">
-            Số dư hiện tại của bạn: <strong><?php echo number_format($_SESSION['so_du'], 0, ',', '.'); ?> VNĐ</strong>
+            Số dư hiện tại của bạn: <strong><?php echo number_format(isset($_SESSION['so_du']) ? $_SESSION['so_du'] : 0, 0, ',', '.'); ?> VNĐ</strong>
         </div>
 
         <?php if (isset($_SESSION['error'])): ?>

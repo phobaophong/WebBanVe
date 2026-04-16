@@ -13,19 +13,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     try {
-        // Tìm user trong CSDL (Dùng PDO Prepare để chống SQL Injection tuyệt đối)
         $stmt = $conn->prepare("SELECT * FROM tbl_nguoidung WHERE ten_dang_nhap = :username");
         $stmt->execute(['username' => $username]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        // Kiểm tra xem có user này không, và mật khẩu giải mã ra có đúng không
         if ($user && password_verify($password, $user['mat_khau'])) {
             if ($user['trang_thai'] === 'bi_khoa') {
                 $_SESSION['error'] = "Tài khoản của bạn đã bị khóa do vi phạm chính sách!";
                 header("Location: ../pages/login.php");
                 exit();
             }
-            // Đăng nhập thành công -> Lưu thông tin vào Session
+
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['username'] = $user['ten_dang_nhap'];
             $_SESSION['ho_ten'] = $user['ho_ten']; 
@@ -34,9 +32,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             
             // Chuyển hướng
             if ($user['vai_tro'] === 'admin') {
-                header("Location: ../admin/index.php"); // Nếu là admin thì văng vào trang quản trị
+                header("Location: ../admin/index.php"); // Nếu là admin 
             } else {
-                header("Location: ../index.php"); // Khách hàng thì về trang chủ mua vé
+                header("Location: ../index.php"); // Khách hàng 
             }
             exit();
         } else {

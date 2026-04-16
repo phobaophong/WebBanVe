@@ -63,7 +63,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt_update_ve = $conn->prepare("UPDATE tbl_ve SET so_luong_con = so_luong_con - :so_luong WHERE id = :id_ve");
         $stmt_update_ve->execute(['so_luong' => $so_luong_mua, 'id_ve' => $id_ve]);
 
-        // TẠO ĐƠN HÀNG CHÍNH
         $ten_trandau_snapshot = $ve_info['ten_nha'] . " vs " . $ve_info['ten_khach'];
         $ten_hangve_snapshot = $ve_info['ten_hang'];
 
@@ -80,9 +79,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             'ten_hv'    => $ten_hangve_snapshot
         ]);
 
-        // ======================================================================
-        // ĐOẠN QUAN TRỌNG: SINH MÃ QR VÀO BẢNG tbl_chitiet_donhang
-        // ======================================================================
+
         $id_donhang_vua_tao = $conn->lastInsertId(); 
         
         $stmt_chitiet = $conn->prepare("INSERT INTO tbl_chitiet_donhang (id_donhang, ma_donhang_qr) VALUES (?, ?)");
@@ -92,14 +89,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $ma_qr_le = "VBD-" . strtoupper(substr(md5(uniqid(rand(), true)), 0, 6)) . "-" . ($i + 1);
             $stmt_chitiet->execute([$id_donhang_vua_tao, $ma_qr_le]);
         }
-        // ======================================================================
 
         $conn->commit();
 
-        // TRỪ SỐ DƯ TRÊN NAVBAR
         $_SESSION['so_du'] -= $tong_tien;
 
-        $_SESSION['success_msg'] = "🎉 Thanh toán thành công! Bạn đã đặt $so_luong_mua vé trận $ten_trandau_snapshot.";
+        $_SESSION['success_msg'] = "Thanh toán thành công! Bạn đã đặt $so_luong_mua vé trận $ten_trandau_snapshot.";
         header("Location: ../pages/history.php");
         exit();
 

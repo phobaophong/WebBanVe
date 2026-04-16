@@ -60,6 +60,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['user_id'] = $conn->lastInsertId();
             $_SESSION['username'] = $username;
             $_SESSION['role'] = 'khach_hang';
+            $_SESSION['so_du'] = 0;
 
             header("Location: ../index.php");
             exit();

@@ -20,20 +20,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     try {
         $conn->beginTransaction();
 
-        // 1. Cập nhật số dư trong bảng tbl_nguoidung
         $stmt_update = $conn->prepare("UPDATE tbl_nguoidung SET so_du = so_du + :tien WHERE id = :id_user");
         $stmt_update->execute(['tien' => $so_tien_nap, 'id_user' => $id_nguoidung]);
 
-        // 2. Lưu lại lịch sử giao dịch nạp tiền vào tbl_thanhtoan
+
         $stmt_log = $conn->prepare("INSERT INTO tbl_thanhtoan (id_nguoidung, so_tien, trang_thai) VALUES (:id_user, :tien, 'thanh_cong')");
         $stmt_log->execute(['id_user' => $id_nguoidung, 'tien' => $so_tien_nap]);
 
         $conn->commit();
 
-        // 3. Cập nhật lại Session để hiển thị ngay trên Navbar
         $_SESSION['so_du'] += $so_tien_nap;
 
-        $_SESSION['success_msg'] = "🎉 Nạp thành công " . number_format($so_tien_nap, 0, ',', '.') . "đ vào tài khoản!";
+        $_SESSION['success_msg'] = "Nạp thành công " . number_format($so_tien_nap, 0, ',', '.') . "đ vào tài khoản!";
         header("Location: ../pages/deposit.php");
         exit();
 
