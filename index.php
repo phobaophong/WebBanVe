@@ -138,8 +138,6 @@ include 'includes/navbar.php';
                         <?php endif; ?>
                     </form>
             </div>
-
-
             
         </aside>
         <!--chính  giữa-->

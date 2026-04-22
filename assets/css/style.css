@@ -127,8 +127,8 @@ ul {
    z-index: 1050;
 }
 
-.user-box:hover .dropdown-menu-custom {
-   display: flex;
+.dropdown-menu-custom.show {
+   display: flex !important;
 }
 
 .dropdown-item {

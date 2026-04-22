@@ -58,3 +58,23 @@
     </div>
 
 </nav>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const userBox = document.querySelector('.user-box');
+    const dropdownMenu = document.querySelector('.dropdown-menu-custom');
+
+    if (userBox && dropdownMenu) {
+        userBox.addEventListener('click', function(event) {
+            dropdownMenu.classList.toggle('show');
+            event.stopPropagation(); 
+        });
+
+        document.addEventListener('click', function(event) {
+            if (!userBox.contains(event.target)) {
+                dropdownMenu.classList.remove('show');
+            }
+        });
+    }
+});
+</script>
